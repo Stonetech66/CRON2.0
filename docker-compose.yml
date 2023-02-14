@@ -4,20 +4,11 @@ services:
     build: .
     ports:
       -8000:8000
+    command: uvicorn /app/CRON2.main:app --reload 0.0.0.0:8000
     volumes:
       -./:/app
   
-  db:
-    image: mongodb
-    ports:
-      -2710:2710
-    environment:
-      - name=value
-    volumes:
-      -cron2db:/app
 
-volumes:
-  cron2db:
 
 
 

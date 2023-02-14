@@ -1,3 +1,0 @@
-C:\Users\BBBBBBBBBBBBBBBB\pp\lop\Scripts\activate.bat
-celery -A CRON2.worker.app beat -l info                  
-celery -A CRON2.worker.app worker -l info -P gevent    
