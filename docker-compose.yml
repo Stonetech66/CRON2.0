@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - 8000:8000
-    command: uvicorn /app/CRON2.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn CRON2.main:app --host 0.0.0.0 --port 8000
     volumes:
       - ./:/app
   
