@@ -1,0 +1,24 @@
+version: '3'
+services: 
+  cron2:
+    build: .
+    ports:
+      -8000:8000
+    volumes:
+      -./:/app
+  
+  db:
+    image: mongodb
+    ports:
+      -2710:2710
+    environment:
+      - name=value
+    volumes:
+      -cron2db:/app
+
+volumes:
+  cron2db:
+
+
+
+
