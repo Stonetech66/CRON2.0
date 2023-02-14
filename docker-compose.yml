@@ -3,10 +3,10 @@ services:
   cron2:
     build: .
     ports:
-      -8000:8000
+      - 8000:8000
     command: uvicorn /app/CRON2.main:app --reload 0.0.0.0:8000
     volumes:
-      -./:/app
+      - ./:/app
   
 
 
