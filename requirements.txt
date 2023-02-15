@@ -5,3 +5,4 @@ uvicorn
 pytz==2022.1
 python-dateutil==2.8.2
 python-dotenv
+celery
