@@ -2,3 +2,4 @@ fastapi
 motor
 aiohttp
 uvicorn
+pytz==2022.1
