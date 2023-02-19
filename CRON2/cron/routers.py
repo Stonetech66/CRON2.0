@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import pytz
-from .utils import next_execution
+from ..utils import next_execution
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse

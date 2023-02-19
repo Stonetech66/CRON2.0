@@ -3,7 +3,7 @@ from .schema import CronSchemaDetails
 from bson.objectid import ObjectId
 from fastapi import HTTPException
 from .schema import CronSchema
-from .utils import next_execution
+from ..utils import next_execution
 import pytz
 from datetime import datetime
 from fastapi import HTTPException

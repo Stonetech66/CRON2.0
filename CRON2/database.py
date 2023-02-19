@@ -1,4 +1,3 @@
-from pymongo import MongoClient 
 from motor import motor_asyncio
 from dotenv import load_dotenv
 import os

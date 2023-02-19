@@ -6,3 +6,8 @@ pytz==2022.1
 python-dateutil==2.8.2
 python-dotenv
 celery
+python-jose==3.3.0
+fastapi-jwt-auth==0.5.0
+email-validator==1.3.0
+dnspython==2.2.1
+bcrypt==4.0.1   

@@ -5,7 +5,7 @@ from datetime import datetime
 import asyncio
 import pytz
 import aiohttp
-from .utils import find_next_execution
+from .utils import find_upper_execution
 from bson.objectid import ObjectId
 
 
@@ -51,7 +51,7 @@ async def send_requests(url, method, header, body, cron_id, timeout, next_execut
     hour=x["schedule"]["hours"]
     minute=x["schedule"]["minutes"]
     timezone=x["schedule"]["timezone"]
-    upper_execution= find_next_execution(next_execution, timezone, year, month, week, day, hour, minute)
+    upper_execution= find_upper_execution(next_execution, timezone, year, month, week, day, hour, minute)
     c=await cron_table.update_one({"id":cron_id}, {"$set": {"schedule.next_execution":upper_execution}})
     return c
 
