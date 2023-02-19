@@ -4,6 +4,8 @@ from bson.objectid import ObjectId
 from typing import Union, Any
 from .validators import timezone_valid, url_valid
 
+from datetime import datetime
+
 class Methods(str,Enum):
     GET="get"
     POST="post"
@@ -13,6 +15,15 @@ class Methods(str,Enum):
     DELETE="delete"
     PATCH="patch"
 
+
+class Weekdays(str, Enum):
+    monday='MO'
+    tuesday= 'TU'
+    wednesday='WE'
+    thursday='TH'
+    friday='FR'
+    saturday='SA'
+    sunday='SU'
 
 
 class MongoId(str):
@@ -30,9 +41,12 @@ class MongoId(str):
     def to_representation(self):
         return str(self)
 
+class ID(BaseModel):
+    id:MongoId=Field(alias="_id")
+
 class CronBase(BaseModel):
     url:str
-    method:Methods
+    method:Methods=Field(default='get')
     headers:dict =Field(default=None)
     body:Any=Field(default=None,)
 
@@ -40,10 +54,10 @@ class CronBase(BaseModel):
 class  CronSchema(CronBase):
     years:int=Field(default=0)
     months:int=Field(default=0, description="number of months", le=12)
-    weeks:int=Field(default=0, description="number of weeks", le=4)
+    weekday:Weekdays=Field(default=None)
     days:int=Field(default=0)
-    hours:int=Field(default=0, le=24)
-    minutes:int=Field(default=1,le=60)
+    hours:int=Field(default=0, le=23)
+    minutes:int=Field(default=0,le=60)
     timezone:str
 
     class Config:
@@ -55,8 +69,9 @@ class  CronSchema(CronBase):
                 "method": "get",
                 "headers": {"Authorization": "Bearer xxxxxxx"},
                 "timezone":"Africa/Lagos",
-                "days":1,
+                "weekday":"MO",
                 "hours":3,
+                "minutes":4
             }
         }
     @validator('timezone')
@@ -69,8 +84,11 @@ class  CronSchema(CronBase):
         if not url_valid(v):
             raise ValueError("invalid url provided")
         return v
-class CronSchemaDetails(CronBase):
-    id: MongoId= Field(alias="_id")
+
+class Response(ID):
+    status_code:int
+    date:datetime
+class CronSchemaDetails(CronBase, ID):
     schedule:dict
     class Config:
         arbitrary_types_allowed=True

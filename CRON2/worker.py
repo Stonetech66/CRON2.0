@@ -8,20 +8,21 @@ import aiohttp
 from .utils import find_next_execution
 from bson.objectid import ObjectId
 
+
+
+
+
 timeout=aiohttp.ClientTimeout(total=30)
 
 async def send_requests(url, method, header, body, cron_id, timeout, next_execution):
-    print(f"{cron_id} {datetime.now()}")
     try:
         async with aiohttp.ClientSession() as session:
             if method == "get":
                     async with session.get(url, timeout=timeout, headers=header) as response:
                         status_code= response.status
-                        print(status_code)
             elif method== "post":
-                async with session.post(url, timeout=timeout, headers=header) as response:
+                async with session.post(url, timeout=timeout, headers=header, body=body) as response:
                     status_code= response.status
-                    print(status_code)
             elif method == "put":
                 async with session.put(url, timeout=timeout, headers=header) as response:
                     status_code= response.status
@@ -41,7 +42,6 @@ async def send_requests(url, method, header, body, cron_id, timeout, next_execut
                 status_code = 500
     except:
         status_code=500
-    print(status_code)
     response_table.insert_one({"staus_code":status_code, "cron_id":cron_id, "date":next_execution})
     x=await cron_table.find_one({"_id": ObjectId(cron_id)})
     year= x["schedule"]["years"]
@@ -51,14 +51,8 @@ async def send_requests(url, method, header, body, cron_id, timeout, next_execut
     hour=x["schedule"]["hours"]
     minute=x["schedule"]["minutes"]
     timezone=x["schedule"]["timezone"]
-    print(minute)
-    print(hour)
-    print(timezone)
-    print(next_execution)
     upper_execution= find_next_execution(next_execution, timezone, year, month, week, day, hour, minute)
-    print(upper_execution)
     c=await cron_table.update_one({"id":cron_id}, {"$set": {"schedule.next_execution":upper_execution}})
-    print(c)
     return c
 
 
@@ -67,7 +61,6 @@ async def main():
     async for cron in cron_table.find({"schedule.next_execution":{"$lte": datetime.now(tz=pytz.timezone("UTC"))}}):
         url=cron["url"]
         cron_id=cron["_id"]
-        print(cron_id)
         method=cron["method"]
         next_execution=cron["schedule"]["next_execution"]
         header=cron["headers"]
@@ -87,7 +80,8 @@ async def main():
 
 
 async def Startcron():
-   while True:
+    while True:
+
         await asyncio.gather(main())
         await asyncio.sleep(60)
 
@@ -97,16 +91,17 @@ async def Startcron():
 
 
 
+
+# celery conf
 # @app.task
 # def CronJob2():
 #     asyncio.run(main())
 
+# app.conf.beat_schedule= {
+#     'send_sceduled_letters':{
+#         'task': 'CRON2.worker.CronJob',
+#         'schedule':60,
 
-app.conf.beat_schedule= {
-    'send_sceduled_letters':{
-        'task': 'CRON2.worker.CronJob',
-        'schedule':60,
+#     }
 
-    }
-
-}
+# }
