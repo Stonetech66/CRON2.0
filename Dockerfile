@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM my-python-image
 
 WORKDIR /app
 
@@ -6,5 +6,9 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY ./CRON2 /app/CRON2
+COPY . /app/
+
+
+
+
 

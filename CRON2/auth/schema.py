@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, validator
 from fastapi_jwt_auth import AuthJWT
 import os
 from ..cron.schema import MongoId
@@ -30,8 +30,9 @@ class UserDetails(ID):
     fullname:str
 
 class Login(BaseModel):
-    email:str
-    password:str
+    email:EmailStr
+    password:str=Field(default=None)
+
 class LoginDetails(BaseModel):
     user:dict=UserDetails
     access_token:str

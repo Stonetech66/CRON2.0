@@ -3,10 +3,35 @@ services:
   cron2:
     build: .
     ports:
-      - 8000:8000
-    command: uvicorn CRON2.main:app --host 0.0.0.0 --port 8000
+      - 80:80
+    command: sh -c "sh /app/server.sh"
     volumes:
       - ./:/app
+    env_file:
+       - ./.env
+  worker:
+    build: .
+    command: sh -c "chmod +x /app/worker.sh && sh /app/worker.sh"
+    env_file:
+     - ./.env
+  consumer1:
+    build: .
+    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer1.sh"
+    env_file:
+      - ./.env
+  consumer2:
+    build: .
+    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer2.sh"
+    env_file:
+      - ./.env
+
+
+
+
+
+
+
+
   
 
 

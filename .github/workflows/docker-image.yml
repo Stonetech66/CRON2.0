@@ -1,4 +1,4 @@
-name: Docker compose CI
+name: CRON2.0 CI
 
 on:
   push:
@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker compose up
+      run: docker image build

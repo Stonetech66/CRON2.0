@@ -13,6 +13,10 @@ def find_upper_execution(last_execution:datetime, timezone:str, year:int, month:
         return last_execution.replace(tzinfo=pytz.timezone(timezone)) + relativedelta( hours=hours, minutes=minutes)
 
 
+def error_code(status_code):
+    if str(status_code).startswith("5") or str(status_code).startswith("4"):
+        return True
+    return False
     
         
 
@@ -26,10 +30,13 @@ def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:i
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(weekday=eval(weekday)(1), hour=hours, minute=minutes, second=0, microsecond=0 )
 
     elif not day == 0:
-         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
+        d=datetime.now(tz=pytz.timezone(timezone))
+        if d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0) < d:
+            return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
+        return d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0)
     
     elif not hours == 0:
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(hours=hours, minutes=minutes, second=0, microsecond=0)
     
     elif minutes:
-        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(minutes=minutes)
+        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(minutes=minutes, second=0, microsecond=0)

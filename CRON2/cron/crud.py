@@ -11,7 +11,7 @@ from fastapi import HTTPException
 
 
 class Cron:
-    cron_error=HTTPException(detail="cron dosent exists", status=404)
+    cron_error=HTTPException(detail="cron dosent exists", status_code=404)
 
     async def create_cron(schema:CronSchema, user_id:str)-> dict:
         cron_data={}
@@ -20,16 +20,18 @@ class Cron:
         cron_data['method']=schema.method
         cron_data['headers']=schema.headers
         cron_data['body']=schema.body
+        cron_data['notify_on_error']= schema.notify_on_error
         schedule_data['years']=schema.years
-        schedule_data['months']=schema.months
-        schedule_data['weeks']=schema.weeks
+        schedule_data['month']=schema.month
+        schedule_data['weekday']=schema.weekday
         schedule_data['days']=schema.days
-        schedule_data['hours']=schema.days
-        schedule_data['minutes']=schema.days
+        schedule_data['hours']=schema.hours
+        schedule_data['minutes']=schema.minutes
         schedule_data['timezone']=schema.timezone
-        schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.months, schema.weeks, schema.days, schema.hours, schema.minutes)
+        schedule_data['date_created']= datetime.now()
+        schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
         cron_data['schedule']=schedule_data
-        cron= await cron_table.insert_one({**cron_data , 'user_id':ObjectId(user_id)})
+        cron= await cron_table.insert_one({**cron_data , 'user_id':ObjectId(user_id), "error_count":0})
         return {"_id":cron.inserted_id,**cron_data}
 
     async def get_crons(user_id:str,skip:int=0, limit:int=5, )-> list:
@@ -50,14 +52,15 @@ class Cron:
             cron_data['method']=schema.method
             cron_data['headers']=schema.headers
             cron_data['body']=schema.body
+            cron_data['notify_on_error']= schema.notify_on_error
             schedule_data['years']=schema.years
-            schedule_data['months']=schema.months
+            schedule_data['month']=schema.month
             schedule_data['weekday']=schema.weekday
             schedule_data['days']=schema.days
             schedule_data['hours']=schema.hours
             schedule_data['minutes']=schema.minutes 
             schedule_data['timezone']=schema.timezone
-            schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.months, schema.weekday, schema.days, schema.hours, schema.minutes)
+            schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
             cron_data['schedule']=schedule_data
             cron= await cron_table.update_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)},{"$set":cron_data})
             if cron.updated_count==1:
@@ -65,13 +68,17 @@ class Cron:
             raise cls.cron_error
         except:
             raise cls.cron_error
+        
 
+    @classmethod
     async def delete_cron(cls, id:str, user_id:str):
         cron= await cron_table.delete_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)})
         if cron.deleted_count ==1:
             return True
         raise cls.cron_error
+    
 
+    @classmethod
     async def get_cron(cls,id:str, user_id:str):
         try:
             cron= await cron_table.find_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)})
@@ -84,15 +91,16 @@ class Cron:
     async def get_response_history(cron_id, skip, limit):
 
             response_list=[]
-            async for resp in response_table.find({"cron_id":cron_id}).skip(skip).limit(limit):
+            async for resp in response_table.find({"cron_id":ObjectId(cron_id)}).skip(skip).limit(limit):
                 response_list.append(resp)
             return response_list
  
     async def clear_response_history(cron_id):
-        return await response_table.delete_many({"cron_id":cron_id})
+        return await response_table.delete_many({"cron_id":ObjectId(cron_id)})
     
 
-
+    async def insert_many_response(data):
+        await response_table.insert_many(data)
 
         
     

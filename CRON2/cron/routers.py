@@ -8,9 +8,12 @@ from .schema import CronSchema, CronSchemaDetails, Response
 from ..database import cron_table, db
 from .crud import Cron
 from ..dependencies import get_current_user
+from bson.objectid import ObjectId
+
 cron=Cron
 
-router=APIRouter(prefix='/v1',)
+
+router=APIRouter(prefix='/v1')
 
 CRON_MAXIMUM_FAILURES=1
 
@@ -40,15 +43,20 @@ async def get_cron(cron_id:str, user=Depends(get_current_user)):
     cron= await Cron.get_cron(cron_id, str(user["_id"]))
     return cron
 
-@router.get("/cron-response/{cron_id}", response_model=Response)
+@router.get("/cron-response/{cron_id}", response_model=list[Response])
 async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
+    print(user)
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
-    response=await  Cron.get_reponse_history(cron_id, skip, limit)
+    response=await  Cron.get_response_history(cron_id, skip, limit)
+    print(response)
     return response
 
 
-@router.delete("/clear-response-history/{cron_id}")
+@router.delete("/clear-response-history/{cron_id}", status_code=204)
 async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
+
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response= await Cron.clear_response_history(cron_id)
-    return JSONResponse("success", status_code=204)
+    return "success"
+
+

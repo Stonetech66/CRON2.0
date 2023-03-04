@@ -7,7 +7,7 @@ from fastapi_jwt_auth import AuthJWT
 
 router=APIRouter(prefix='/v1')
 
-@router.get("/user-details")
+@router.get("/user-details", response_model=schema.UserDetails)
 async def user_details(user:dict=Depends(get_current_user)):
     return user
 

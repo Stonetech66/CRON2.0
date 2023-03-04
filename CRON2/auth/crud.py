@@ -17,7 +17,7 @@ class UserCrud:
         return await user_table.find_one({"_id":ObjectId(id)})
 
     async def create_user(schema):
-        user= await user_table.insert_one({'email':schema.email, 'password':hash_password(schema.password), 'date_joined':datetime.now(tz=timezone("UTC"))})
+        user= await user_table.insert_one({'email':schema.email, 'password':hash_password(schema.password), 'fullname':schema.fullname, 'date_joined':datetime.now(tz=timezone("UTC"))})
         return user.inserted_id
     
     async def get_user_by_email(email):

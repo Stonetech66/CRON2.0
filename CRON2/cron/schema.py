@@ -49,16 +49,20 @@ class CronBase(BaseModel):
     method:Methods=Field(default='get')
     headers:dict =Field(default=None)
     body:Any=Field(default=None,)
+    notify_on_error: bool
 
 
 class  CronSchema(CronBase):
     years:int=Field(default=0)
-    months:int=Field(default=0, description="number of months", le=12)
+    month:int=Field(default=0,  le=31)
     weekday:Weekdays=Field(default=None)
     days:int=Field(default=0)
     hours:int=Field(default=0, le=23)
-    minutes:int=Field(default=0,le=60)
+    minutes:int=Field(default=0,le=59)
     timezone:str
+
+
+    
 
     class Config:
 
@@ -70,15 +74,38 @@ class  CronSchema(CronBase):
                 "headers": {"Authorization": "Bearer xxxxxxx"},
                 "timezone":"Africa/Lagos",
                 "weekday":"MO",
-                "hours":3,
-                "minutes":4
+                "hours":9,
+                "minutes":0,
+                "notify_on_error": False
             }
         }
+
+    @validator("month")
+    def validate_month(cls, v, values, **kwargs):
+        if v and not values["hours"] and not values["minutes"]:
+            raise ValueError(f"you chose {v} of every month, you are to also provide a time e.g hours=18, minutes=0 i.e every {v}  by 6:00 pm ")
+        return v
+    
+    @validator("weekday")
+    def validate_weekday(cls, v, values, **kwargs):
+        if v and not values["hours"] :
+            raise ValueError(f"you are to also provide a time e.g hours=18, minutes=30 i.e every {v}  by 6:30 pm ")
+        return v
+    
+    @validator("days")
+    def validate_days(cls, v, values, **kwargs):
+        if v and not values["hours"] :
+            raise ValueError(f"you are to also provide a time e.g hours=18, minutes=0 i.e every {v} days  by 6:00 pm ")
+        return v
+    
+
+    
     @validator('timezone')
     def validate_timezone(cls, v):
         if not timezone_valid(v):
             raise ValueError("invalid timezone provided")
         return v
+
     @validator('url')
     def validate_url(cls, v):
         if not url_valid(v):
