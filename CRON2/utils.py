@@ -14,7 +14,7 @@ def find_upper_execution(last_execution:datetime, timezone:str, year:int, month:
 
 
 def error_code(status_code):
-    if str(status_code).startswith("5") or str(status_code).startswith("4"):
+    if status_code > 400:
         return True
     return False
     

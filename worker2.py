@@ -8,28 +8,33 @@ from bson.objectid import ObjectId
 import pika
 import json
 from aiokafka import AIOKafkaProducer
-from CRON2.publishers import publish, CustomJsonEncoder
 import os
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
+server=os.getenv('KAFKA_SERVER')
+kafka_password=os.getenv("KAFKA_PASSWORD")
+kafka_username= os.getenv("KAFKA_USERNAME")
 
 
-
+class CustomJsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        return super().default(o)
 
 
 timeout=aiohttp.ClientTimeout(total=30)
 
 
 
-total=0
+
 async def send_requests2(session,data):
-    total += 1
-    print(total)
     method=data['method']
     header=data['header']
-    schedule= data['schedule'].update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
+    schedule= data['schedule']
+    schedule=schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
     url= data['url']
     cron_id= ObjectId(data['cron_id'])
     body= data['body']
@@ -80,7 +85,7 @@ async def save_responses(schedule:dict, cron_id, status_code):
     if error_code(status_code):
         # await cron_table.update_one({"_id":ObjectId(cron_id)}, {"$set": {"schedule.next_execution":upper_execution, "error_count":+1}})
         # if schedule['notify_on_error']:
-        #     await publish("error-mail",{"cron_id":cron_id, "status_code":status_code})
+        #     await producer.send("error-mail",{"cron_id":cron_id, "status_code":status_code})
         pass
     else:
         await cron_table.update_one({"_id":ObjectId(cron_id)}, {"$set": {"schedule.next_execution":upper_execution}})
@@ -112,13 +117,6 @@ async def CronJob(producer):
 
 
 
-
-server=os.getenv('KAFKA_SERVER')
-kafka_password=os.getenv("KAFKA_PASSWORD")
-kafka_username= os.getenv("KAFKA_USERNAME")
-
-
-
 async def Startcron():
     print("worker started")
     producer=AIOKafkaProducer(
@@ -134,7 +132,9 @@ async def Startcron():
             '''A loop that occurs every 1 minute , and calls the main coroutine 
             which then finds any cron which its scheduled time is at this particular minute
             '''
+            st=datetime.now()
             await CronJob(producer)
+            print(datetime.now() - st)
             await asyncio.sleep(60)
     finally:
         await producer.stop()

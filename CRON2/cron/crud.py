@@ -20,7 +20,8 @@ class Cron:
         cron_data['method']=schema.method
         cron_data['headers']=schema.headers
         cron_data['body']=schema.body
-        cron_data['notify_on_error']= schema.notify_on_error
+        schedule_data['notify_on_error']= schema.notify_on_error
+        cron_data["date_added"]= datetime.now()
         schedule_data['years']=schema.years
         schedule_data['month']=schema.month
         schedule_data['weekday']=schema.weekday
@@ -52,7 +53,7 @@ class Cron:
             cron_data['method']=schema.method
             cron_data['headers']=schema.headers
             cron_data['body']=schema.body
-            cron_data['notify_on_error']= schema.notify_on_error
+            schedule_data['notify_on_error']= schema.notify_on_error
             schedule_data['years']=schema.years
             schedule_data['month']=schema.month
             schedule_data['weekday']=schema.weekday

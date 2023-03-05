@@ -1,9 +1,18 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+password=os.getenv("MAIL_PASSWORD")
+username=os.getenv("MAIL_USERNAME")
+mail_from=os.getenv("MAIL_FROM")
+
 
 env_config = ConnectionConfig(
-   MAIL_USERNAME='livingstonemaxwell971@gmail.com',
-    MAIL_PASSWORD='',
-    MAIL_FROM='livingstonemaxwell971@gmail.com',
+   MAIL_USERNAME=username,
+    MAIL_PASSWORD=password,
+    MAIL_FROM=mail_from,
     MAIL_PORT=587,
     MAIL_SERVER='smtp.gmail.com',
     MAIL_FROM_NAME='CRON2.0',
