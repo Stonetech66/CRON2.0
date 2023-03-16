@@ -16,12 +16,12 @@ services:
      - ./.env
   consumer1:
     build: .
-    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer1.sh"
+    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer.sh"
     env_file:
       - ./.env
   consumer2:
     build: .
-    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer2.sh"
+    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer.sh"
     env_file:
       - ./.env
 
