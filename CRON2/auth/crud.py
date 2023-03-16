@@ -14,7 +14,8 @@ def verify_password(plain_password, hashed_password):
 class UserCrud:
 
     async def get_user_by_id(id):
-        return await user_table.find_one({"_id":ObjectId(id)})
+        user= await user_table.find_one({"_id":ObjectId(id)})
+        return {"_id":user["_id"], "email":user['email'], "fullname":user["fullname"]}
 
     async def create_user(schema):
         user= await user_table.insert_one({'email':schema.email, 'password':hash_password(schema.password), 'fullname':schema.fullname, 'date_joined':datetime.now(tz=timezone("UTC"))})

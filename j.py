@@ -12,14 +12,14 @@ c={
   "minutes": 3
 }
 async def fetch(session, url):
-    async with session.post(url, json=c, headers={"Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2M2ZlOTkzYmYzOGUzZmEwNDQzZTM1Y2MiLCJpYXQiOjE2Nzc2MzkzMDgsIm5iZiI6MTY3NzYzOTMwOCwianRpIjoiMzcxYTU4MmYtZWRiOS00NDc0LTg0OTItOTY0ZmIyN2UzMDg0IiwiZXhwIjoxNjc3NjQwMjA4LCJ0eXBlIjoiYWNjZXNzIiwiZnJlc2giOmZhbHNlfQ.nCRfcihiGGzmskpRk8OZ-Jmcz4SuD4NrSPepJQ_MkVQ"}) as response:
+    async with session.post(url, json=c, headers={"Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2M2ZlOTkzYmYzOGUzZmEwNDQzZTM1Y2MiLCJpYXQiOjE2NzgyNDcwMzcsIm5iZiI6MTY3ODI0NzAzNywianRpIjoiOGIyYTU5OTgtNDgwZS00MzMxLTk1YzEtN2JlOWU0YmQ4ZTliIiwiZXhwIjoxNjc4MjQ3OTM3LCJ0eXBlIjoiYWNjZXNzIiwiZnJlc2giOmZhbHNlfQ.oIsdRJzXGReBLqu6sfxABdSsOIYJfIqSRc1ZmfpTpuc"}) as response:
              return  response.status
 
 
 async def go():                             
      async with aiohttp.ClientSession() as session:
              tasks=[]
-             for u in ['http://127.0.0.1:8000/v1/add-cron/'] * 1500:
+             for u in ['http://127.0.0.1:8000/v1/add-cron/'] * 1000:
                      tasks.append(asyncio.ensure_future(fetch(session, u)))
              responses= await asyncio.gather(*tasks)
              return responses

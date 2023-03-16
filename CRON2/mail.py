@@ -22,13 +22,13 @@ env_config = ConnectionConfig(
     TEMPLATE_FOLDER='templates',
  )
 
-async def send_error_email(recepient,status_code):
+async def send_error_email(data):
 
 
     message=MessageSchema(
         subject=f'Cron Job Failed',
-        recipients=[recepient,],
-        template_body={'status_code':status_code},
+        recipients=[data['email'],],
+        template_body={'status_code':data['code']},
         subtype='html'
 
     )

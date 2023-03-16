@@ -1,8 +1,8 @@
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, validator, Field, HttpUrl
 from enum import Enum
 from bson.objectid import ObjectId
-from typing import Union, Any
-from .validators import timezone_valid, url_valid
+from typing import Any
+from .validators import timezone_valid
 
 from datetime import datetime
 
@@ -45,20 +45,24 @@ class ID(BaseModel):
     id:MongoId=Field(alias="_id")
 
 class CronBase(BaseModel):
-    url:str
+    url:HttpUrl
     method:Methods=Field(default='get')
     headers:dict =Field(default=None)
     body:Any=Field(default=None,)
-    notify_on_error: bool
+    notify_on_error: bool= Field(default=True)
 
-
-class  CronSchema(CronBase):
-    years:int=Field(default=0)
-    month:int=Field(default=0,  le=31)
-    weekday:Weekdays=Field(default=None)
-    days:int=Field(default=0)
-    hours:int=Field(default=0, le=23)
+class  CronSchema(BaseModel):
+    url:HttpUrl
+    method:Methods=Field(default='get')
+    headers:dict =Field(default=None)
+    body:Any=Field(default=None,)
+    notify_on_error: bool= Field(default=True)
     minutes:int=Field(default=0,le=59)
+    hours:int=Field(default=0, le=23)
+    days:int=Field(default=0)
+    weekday:Weekdays=Field(default=None)
+    month:int=Field(default=0,  le=31)
+    years:int=Field(default=0)
     timezone:str
 
 
@@ -82,8 +86,8 @@ class  CronSchema(CronBase):
 
     @validator("month")
     def validate_month(cls, v, values, **kwargs):
-        if v and not values["hours"] and not values["minutes"]:
-            raise ValueError(f"you chose {v} of every month, you are to also provide a time e.g hours=18, minutes=0 i.e every {v}  by 6:00 pm ")
+        if not v==0 and not values["hours"]:
+            raise ValueError(f"you chose {v} of every month, you are to also provide a time e.g hours=18, minutes=0 i.e every {v} of the month  by 6:00 pm ")
         return v
     
     @validator("weekday")
@@ -94,7 +98,7 @@ class  CronSchema(CronBase):
     
     @validator("days")
     def validate_days(cls, v, values, **kwargs):
-        if v and not values["hours"] :
+        if not v==0 and not values["hours"] :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=0 i.e every {v} days  by 6:00 pm ")
         return v
     
@@ -106,11 +110,6 @@ class  CronSchema(CronBase):
             raise ValueError("invalid timezone provided")
         return v
 
-    @validator('url')
-    def validate_url(cls, v):
-        if not url_valid(v):
-            raise ValueError("invalid url provided")
-        return v
 
 class Response(ID):
     status_code:int

@@ -15,11 +15,9 @@ cron=Cron
 
 router=APIRouter(prefix='/v1')
 
-CRON_MAXIMUM_FAILURES=1
-
 @router.post('/add-cron/', status_code=201, response_model=CronSchemaDetails, response_model_by_alias=False)
 async def add_cron(schema:CronSchema, user=Depends(get_current_user)):
-    result =await Cron.create_cron(schema, str(user["_id"]))
+    result =await Cron.create_cron(schema, user)
     return result
 
 @router.get('/crons', response_model=List[CronSchemaDetails])

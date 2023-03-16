@@ -13,7 +13,7 @@ from fastapi import HTTPException
 class Cron:
     cron_error=HTTPException(detail="cron dosent exists", status_code=404)
 
-    async def create_cron(schema:CronSchema, user_id:str)-> dict:
+    async def create_cron(schema:CronSchema, user:dict)-> dict:
         cron_data={}
         schedule_data={}
         cron_data['url']=schema.url
@@ -32,13 +32,13 @@ class Cron:
         schedule_data['date_created']= datetime.now()
         schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
         cron_data['schedule']=schedule_data
-        cron= await cron_table.insert_one({**cron_data , 'user_id':ObjectId(user_id), "error_count":0})
+        cron= await cron_table.insert_one({**cron_data , 'user':user, "error_count":0})
         return {"_id":cron.inserted_id,**cron_data}
 
     async def get_crons(user_id:str,skip:int=0, limit:int=5, )-> list:
         cron_list=[]
         try:
-            async for cron in cron_table.find({"user_id":ObjectId(user_id)}).limit(limit).skip(skip):
+            async for cron in cron_table.find({"user._id":ObjectId(user_id)}).limit(limit).skip(skip):
                 cron_list.append(cron)
         except:
             pass
@@ -63,7 +63,7 @@ class Cron:
             schedule_data['timezone']=schema.timezone
             schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
             cron_data['schedule']=schedule_data
-            cron= await cron_table.update_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)},{"$set":cron_data})
+            cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
             if cron.updated_count==1:
                 return {"_id":ObjectId(id),**cron_data}
             raise cls.cron_error
@@ -73,7 +73,7 @@ class Cron:
 
     @classmethod
     async def delete_cron(cls, id:str, user_id:str):
-        cron= await cron_table.delete_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)})
+        cron= await cron_table.delete_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)})
         if cron.deleted_count ==1:
             return True
         raise cls.cron_error
@@ -82,7 +82,7 @@ class Cron:
     @classmethod
     async def get_cron(cls,id:str, user_id:str):
         try:
-            cron= await cron_table.find_one({"_id": ObjectId(id), "user_id":ObjectId(user_id)})
+            cron= await cron_table.find_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)})
             if cron:
                 return cron
             raise cls.cron_error
