@@ -1,0 +1,37 @@
+services:
+  - name:  e-ticket
+    type:  web
+    env:   python
+    repo:  https://github.com/Stonetech66/E-Ticket-API
+    plan: free
+    buildCommand: "pip3 install -r requirements.txt"
+    startCommand: ./server.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: WEB_CONCURRENCY
+        value: 2
+  - name:  worker
+    type:  web
+    env:   python
+    repo:  https://github.com/Stonetech66/E-Ticket-API
+    plan: free
+    buildCommand: "pip3 install -r requirements.txt"
+    startCommand: ./worker.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: WEB_CONCURRENCY
+        value: 2
+  - name:  consumer
+    type:  web
+    env:   python
+    repo:  https://github.com/Stonetech66/E-Ticket-API
+    plan: free
+    buildCommand: "pip3 install -r requirements.txt"
+    startCommand: ./consumer.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: WEB_CONCURRENCY
+        value: 2      
