@@ -5,7 +5,7 @@ services:
     repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
-    startCommand: ./server.sh
+    startCommand: "uvicorn CRON2.main:app --host 0.0.0.0 --port 80"
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -17,7 +17,7 @@ services:
     repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
-    startCommand: ./worker.sh
+    startCommand: "python -m CRON2.core.worker"
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -29,7 +29,7 @@ services:
     repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
-    startCommand: ./consumer.sh
+    startCommand: "python -m CRON2.core.consumer"
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
