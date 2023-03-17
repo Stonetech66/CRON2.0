@@ -2,7 +2,7 @@ services:
   - name:  cron2.0
     type:  web
     env:   python
-    repo:  https://github.com/Stonetech66/E-Ticket-API
+    repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
     startCommand: ./server.sh
@@ -14,7 +14,7 @@ services:
   - name:  worker
     type:  web
     env:   python
-    repo:  https://github.com/Stonetech66/E-Ticket-API
+    repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
     startCommand: ./worker.sh
@@ -26,7 +26,7 @@ services:
   - name:  consumer
     type:  web
     env:   python
-    repo:  https://github.com/Stonetech66/E-Ticket-API
+    repo:  https://github.com/Stonetech66/CRON2.0
     plan: free
     buildCommand: "pip3 install -r requirements.txt"
     startCommand: ./consumer.sh
