@@ -1,5 +1,5 @@
 services:
-  - name:  e-ticket
+  - name:  cron2.0
     type:  web
     env:   python
     repo:  https://github.com/Stonetech66/E-Ticket-API
