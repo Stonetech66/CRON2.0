@@ -1,40 +1,26 @@
 version: '3'
-services: 
+services:
   cron2:
+    depends_on:
+      - worker
     build: .
     ports:
       - 80:80
-    command: sh -c "sh /app/server.sh"
+    command: sh -c "sh server.sh"
     volumes:
       - ./:/app
     env_file:
-       - ./.env
+      - ./.env
   worker:
+    depends_on:
+      - consumer1
+      - consumer2
     build: .
-    command: sh -c "chmod +x /app/worker.sh && sh /app/worker.sh"
+    command: sh -c "sh worker.sh"
     env_file:
-     - ./.env
+      - ./.env
   consumer1:
     build: .
-    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer.sh"
+    command: sh -c "sh consumer.sh"
     env_file:
-      - ./.env
-  consumer2:
-    build: .
-    command: sh -c "chmod +x /app/worker.sh && sh /app/consumer.sh"
-    env_file:
-      - ./.env
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
+      - .
