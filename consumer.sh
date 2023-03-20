@@ -2,6 +2,6 @@
 
 cd /app/
 
-echo "starting worker >>>"
+echo "starting consumer >>>"
 
 python -m CRON2.core.consumer
