@@ -23,4 +23,9 @@ services:
     build: .
     command: sh -c "sh consumer.sh"
     env_file:
-      - .
+      - ./.env
+  consumer2:
+    build: .
+    command: sh -c "sh  consumer.sh"
+    env_file:
+      - ./.env
