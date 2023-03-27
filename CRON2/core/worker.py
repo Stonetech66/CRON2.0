@@ -37,6 +37,7 @@ async def send_requests(session, data, producer):
     cron_id= ObjectId(data['cron_id'])
     body= data['body']
     email=data["email"]
+    print(f"{url} {datetime.now()}")
     # sending http requests to the specified endpoint
     try:
             if method == "get":
