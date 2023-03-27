@@ -1,5 +1,6 @@
 #!/usr/bin/env bash 
+set -e
 cd /app/
-echo "starting server >>>>"
+echo "starting server 🚀"
 
-uvicorn CRON2.main:app --host 0.0.0.0 --port 80
+uvicorn CRON2.main:app --host 0.0.0.0 --port $PORT
