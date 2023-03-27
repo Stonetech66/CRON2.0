@@ -9,7 +9,7 @@ from ..database import cron_table, db
 from .crud import Cron
 from ..dependencies import get_current_user
 from bson.objectid import ObjectId
-
+from ..test import start_test 
 cron=Cron
 
 
@@ -57,4 +57,7 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
     response= await Cron.clear_response_history(cron_id)
     return "success"
 
-
+@router.get("/test/{access}/{url}/{s_url}"):
+async def test(access:str, url:str, s_url:st):
+   await start_test(s_url,access,url) 
+   return "success" 
