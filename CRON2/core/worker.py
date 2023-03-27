@@ -16,7 +16,7 @@ server=os.getenv('KAFKA_SERVER')
 kafka_password=os.getenv("KAFKA_PASSWORD")
 kafka_username= os.getenv("KAFKA_USERNAME")
 CRON_MAXIMUM_FAILURES=1
-
+print(kafka_server) 
 class CustomJsonEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
