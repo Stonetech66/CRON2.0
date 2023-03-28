@@ -9,15 +9,15 @@ async def fetch(session, url, c, token):
 
 async def start_test(s_url,token,end): 
      c={
-     "url": s_url,
-     "method": "get",
-     "headers": {
-     "Authorization": token, 
-     },
-     "timezone": "Africa/Lagos",
-     "notify_on_error":True,
-     "minutes": 5
-          }                            
+  "url": "https://example.com",
+  "method": "get",
+  "headers": {
+    "Authorization": "Bearer xxxxxxx"
+  },
+  "timezone": "Africa/Lagos",
+  "minutes": 5,
+  "notify_on_error": false
+}                       
      async with aiohttp.ClientSession() as session:
              tasks=[]
              for u in [f'{end}/v1/add-cron/'] * 500:
