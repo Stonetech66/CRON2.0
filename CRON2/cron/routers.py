@@ -43,10 +43,8 @@ async def get_cron(cron_id:str, user=Depends(get_current_user)):
 
 @router.get("/cron-response/{cron_id}", response_model=list[Response])
 async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
-    print(user)
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response=await  Cron.get_response_history(cron_id, skip, limit)
-    print(response)
     return response
 
 
@@ -59,5 +57,5 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
 
 @router.post("/test/{access}/")
 async def test(access:str):
-   await start_test("http://example.com",f"Bearer {access}","https://cron20-production.up.railway.app") 
+   await start_test() 
    return "success" 
