@@ -57,7 +57,7 @@ async def consume():
             while True:
                 cron_tasks=[]
                 err_tasks=[]
-                data=await consumer.getmany(max_records=500, timeout_ms=10000)   
+                data=await consumer.getmany(max_records=500, timeout_ms=30000)   
                 for tp, messages in data.items():
                     for msg in messages:
                         if msg.topic == "cron-2":
