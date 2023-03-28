@@ -12,7 +12,7 @@ async def start_test(s_url,token,end):
      "url": s_url,
      "method": "get",
      "headers": {
-     "Authorization": f"Bearer {token}"
+     "Authorization": token, 
      },
      "timezone": "Africa/Lagos",
      "notify_on_error":True,
