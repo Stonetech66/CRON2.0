@@ -59,5 +59,5 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
 
 @router.post("/test/{access}/")
 async def test(access:str):
-   await start_test("http://example.com",access,"https://cron20-production.up.railway.app") 
+   await start_test("http://example.com",f"Bearer {access}","https://cron20-production.up.railway.app") 
    return "success" 
