@@ -16,7 +16,7 @@ async def start_test(s_url,token,end):
   },
   "timezone": "Africa/Lagos",
   "minutes": 5,
-  "notify_on_error": false
+  "notify_on_error": False
 }                       
      async with aiohttp.ClientSession() as session:
              tasks=[]
