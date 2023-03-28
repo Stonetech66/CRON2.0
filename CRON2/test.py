@@ -20,7 +20,7 @@ async def start_test(s_url,token,end):
           }                            
      async with aiohttp.ClientSession() as session:
              tasks=[]
-             for u in [f'{end}/api/v1/add-cron/'] * 500:
+             for u in [f'{end}/v1/add-cron/'] * 500:
                      tasks.append(asyncio.ensure_future(fetch(session, u)))
              responses= await asyncio.gather(*tasks)
              return responses
@@ -31,4 +31,4 @@ if __name__ == "__main__":
     start=datetime.now()
     asyncio.run(go())
     print(datetime.now() - start)
-print("fkfkf")
+
