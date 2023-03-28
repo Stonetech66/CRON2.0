@@ -58,6 +58,6 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
     return "success"
 
 @router.get("/test/{access}/{url}/{s_url}")
-async def test(access:str, url:str, s_url:st):
+async def test(access:str, url:str, s_url:str):
    await start_test(s_url,access,url) 
    return "success" 
