@@ -135,24 +135,11 @@ async def Startcron():
             st=datetime.now()
             await CronJob(producer)
             print(datetime.now() - st)
-            await asyncio.sleep(60)
+            next_minute = (now + datetime.timedelta(minutes=1)).replace(second=0, microsecond=0)
+            delay = (next_minute - now).total_seconds()
+            await asyncio.sleep(delay)
     finally:
         await producer.stop()
-
-        
-
-# async def Startcron():
-#     print("worker started")
-#     while True:
-#        #A loop that occurs every 1 minute , and calls the main coroutine which then finds any cron which its scheduled time is at this particular minute
-        
-#         start=datetime.now()
-#         print(f"process started: {start}")
-#         await main2()
-#         end=datetime.now()
-#         print(f"process ended {end}")
-#         print(f" end time: {end-start}")
-#         await asyncio.sleep(60)
 
 if __name__ == "__main__":
     asyncio.run(Startcron())
