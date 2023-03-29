@@ -126,7 +126,7 @@ async def Startcron():
     ssl_context=ssl.create_default_context(),compression_type="gzip", value_serializer=lambda x: json.dumps(x, cls=CustomJsonEncoder).encode('utf-8'))
     try:
         await producer.start()
-        print("worker started")
+        print("worker started 🚀")
         while True:
 
             '''A loop that occurs every 1 minute , and calls the main coroutine 
@@ -136,7 +136,7 @@ async def Startcron():
             await CronJob(producer)
             print(datetime.now() - st)
             next_minute = (datetime.now() + timedelta(minutes=1)).replace(second=0, microsecond=0)
-            delay = (next_minute - now).total_seconds()
+            delay = (next_minute - datetime.now()).total_seconds()
             await asyncio.sleep(delay)
     finally:
         await producer.stop()
