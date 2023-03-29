@@ -1,5 +1,5 @@
 from ..database import cron_table
-from datetime import datetime
+from datetime import datetime, timedelta 
 import asyncio
 import pytz, ssl
 import aiohttp
@@ -135,7 +135,7 @@ async def Startcron():
             st=datetime.now()
             await CronJob(producer)
             print(datetime.now() - st)
-            next_minute = (datetime.now() + datetime.timedelta(minutes=1)).replace(second=0, microsecond=0)
+            next_minute = (datetime.now() + timedelta(minutes=1)).replace(second=0, microsecond=0)
             delay = (next_minute - now).total_seconds()
             await asyncio.sleep(delay)
     finally:
