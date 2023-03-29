@@ -135,7 +135,7 @@ async def Startcron():
             st=datetime.now()
             await CronJob(producer)
             print(datetime.now() - st)
-            next_minute = (now + datetime.timedelta(minutes=1)).replace(second=0, microsecond=0)
+            next_minute = (datetime.now() + datetime.timedelta(minutes=1)).replace(second=0, microsecond=0)
             delay = (next_minute - now).total_seconds()
             await asyncio.sleep(delay)
     finally:
