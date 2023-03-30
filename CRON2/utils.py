@@ -12,9 +12,9 @@ def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, ho
         weekdays = {'MO': MO, 'TU': TU, 'WE': WE, 'TH': TH, 'FR': FR, 'SA': SA, 'SU': SU}
         dt_now = datetime.now(pytz.timezone(timezone))
         next_dt = dt_now + relativedelta(weekday=weekdays[weekday], hour=hours, minute=minutes, second=0, microsecond=0)
-        if str(dt_now.strptime('%a')[:2]).upper() == weekday and next_dt <= dt_now:
+        if str(dt_now.strftime('%a')[:2]).upper() == weekday and next_dt <= dt_now:
             date=dt_now + relativedelta(weekday=weekdays[weekday](+1), days=+1, hour=hours, minute=minutes, second=0, microsecond=0)
-        elif str(dt_now.strptime('%a')[:2]).upper() == weekday and next_dt > dt_now:
+        elif str(dt_now.strftime('%a')[:2]).upper() == weekday and next_dt > dt_now:
             date=dt_now + relativedelta(weekday=weekdays[weekday](+1), hour=hours, minute=minutes, second=0, microsecond=0)
         else:
             date=dt_now + relativedelta(weekday=weekdays[weekday](+1), hour=hours, minute=minutes, second=0, microsecond=0) 
