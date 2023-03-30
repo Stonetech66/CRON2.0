@@ -63,6 +63,7 @@ async def consume():
                         if msg.topic == "cron-2":
                             cron_tasks.append(asyncio.create_task(send_requests(session,msg.value, producer)))
                         elif msg.topic == "error-mail":
+                            print("error-mail {msg.value}") 
                             err_tasks.append(asyncio.create_task(send_error_email(msg.value)))
                 start=datetime.now()
 
