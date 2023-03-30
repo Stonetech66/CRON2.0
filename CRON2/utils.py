@@ -29,7 +29,7 @@ def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:i
     elif weekday:
         weekdays = {'MO': MO, 'TU': TU, 'WE': WE, 'TH': TH, 'FR': FR, 'SA': SA, 'SU': SU}
         dt_now = datetime.now(pytz.timezone(timezone))
-        next_dt = dt_now + relativedelta(weekday=weekdays[weekday], hour=hours, minute=minutes, second=0, microsecond=0)
+        next_dt = dt_now + relativedelta(weekday=weekdays[weekday](+1), days=+1, hour=hours, minute=minutes, second=0, microsecond=0)
         print(f"weekday found {next_dt}") 
         return next_dt
     elif not day == 0:
