@@ -41,7 +41,7 @@ async def get_cron(cron_id:str, user=Depends(get_current_user)):
     cron= await Cron.get_cron(cron_id, str(user["_id"]))
     return cron
 
-@router.get("/cron-response/{cron_id}", response_model=list[Response])
+@router.get("/cron-response/history/{cron_id}", response_model=list[Response])
 async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response=await  Cron.get_response_history(cron_id, skip, limit)
@@ -49,7 +49,7 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
 
 
 @router.delete("/clear-response-history/{cron_id}", status_code=204)
-async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
+async def cron_response_history(cron_id:str, user=Depends(get_current_user)):
 
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response= await Cron.clear_response_history(cron_id)
