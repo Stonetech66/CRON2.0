@@ -34,7 +34,7 @@ async def send_error_email(data):
     )
     f=FastMail(env_config)
     try:
-       return  await f.send_message(message, template_name='error_mail.html')
-
+       await f.send_message(message, template_name='error_mail.html'). 
+       print("sent") 
     except Exception as e:
-        return e
+        print(f"failed to send {e} ") 
