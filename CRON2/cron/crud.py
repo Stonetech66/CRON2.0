@@ -64,7 +64,7 @@ class Cron:
             schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
             cron_data['schedule']=schedule_data
             cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
-            if cron.updated_count==1:
+            if cron.modified_count==1:
                 return {"_id":ObjectId(id),**cron_data}
             raise cls.cron_error
         except:
