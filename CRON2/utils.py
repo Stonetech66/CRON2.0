@@ -26,9 +26,9 @@ def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:i
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes)
 
 
-    elif weekday:
-        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(weekday=eval(weekday)(1), hour=hours, minute=minutes, second=0, microsecond=0 )
-
+    elif not weekday ==None:
+        v=datetime.now(tz=pytz.timezone(timezone))+ relativedelta(weekday=eval(weekday)(1), hour=hours, minute=minutes, second=0, microsecond=0 )
+        return v
     elif not day == 0:
         d=datetime.now(tz=pytz.timezone(timezone))
         if d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0) < d:
