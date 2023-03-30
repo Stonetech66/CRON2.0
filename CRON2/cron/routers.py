@@ -59,7 +59,7 @@ async def delete_response_history(cron_id:str, user=Depends(get_current_user)):
 async def test(access:str):
    await start_test("http//:example.com",access,"https://cron20-production.up.railway.app") 
    return "success" 
-@router.get("/cron-response/{response_id}")
+@router.get("/cron-response/{response_id}", response_model=Response)
 async def get_response(response_id:str, user=Depends(get_current_user) ):
      resp= await Cron.get_response(response_id)
      return resp
