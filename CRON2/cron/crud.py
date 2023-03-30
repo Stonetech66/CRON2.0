@@ -3,7 +3,7 @@ from .schema import CronSchemaDetails
 from bson.objectid import ObjectId
 from fastapi import HTTPException
 from .schema import CronSchema
-from ..utils import next_execution
+from ..utils import find_next_execution
 import pytz
 from datetime import datetime
 from fastapi import HTTPException
@@ -30,7 +30,7 @@ class Cron:
         schedule_data['minutes']=schema.minutes
         schedule_data['timezone']=schema.timezone
         schedule_data['date_created']= datetime.now()
-        schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+        schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
         cron_data['schedule']=schedule_data
         cron= await cron_table.insert_one({**cron_data , 'user':user, "error_count":0})
         return {"_id":cron.inserted_id,**cron_data}
@@ -61,7 +61,7 @@ class Cron:
             schedule_data['hours']=schema.hours
             schedule_data['minutes']=schema.minutes 
             schedule_data['timezone']=schema.timezone
-            schedule_data['next_execution']=next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+            schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
             cron_data['schedule']=schedule_data
             cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
             if cron.modified_count==1:
