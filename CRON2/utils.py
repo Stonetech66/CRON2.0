@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta, MO, TU, TH, WE, FR, SA, SU
 import pytz
 
-def find_upper_execution(timezone:str, year:int , month:int, weekday, day:int, hours:int, minutes:int):
+def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:int, minutes:int):
 
     if not month == 0:
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes)
