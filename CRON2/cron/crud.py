@@ -67,7 +67,8 @@ class Cron:
             if cron.modified_count==1:
                 return {"_id":ObjectId(id),**cron_data}
             raise cls.cron_error
-        except:
+        except Exception as e:
+            print(e) 
             raise cls.cron_error
         
 
@@ -99,7 +100,22 @@ class Cron:
     async def clear_response_history(cron_id):
         return await response_table.delete_many({"cron_id":ObjectId(cron_id)})
     
+    async def get_response(id:str):
+         try:
+            resp= await response_table.find_one({"_id": ObjectId(id),})
+            if resp:
+                return resp
+            raise HTTPException(detail="response doesn't exists", status_code=404)
+          except:
+             raise HTTPException(detail="response doesn't exists", status_code=404)
+    
+    async def delete_response(id:str):
+        resp= await response_table.delete_one({"_id": ObjectId(id)})
+        if resp.deleted_count ==1:
+            return True
+        raise HTTPException(detail="response doesn't exists", status_code=404)
 
+    
     async def insert_many_response(data):
         await response_table.insert_many(data)
 
