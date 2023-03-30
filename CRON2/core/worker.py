@@ -83,7 +83,7 @@ async def save_responses(schedule:dict, cron_id, status_code, email, producer):
     upper_execution= next_execution(timezone, year, month, weekday, day, hours, minute)
 
     if error_code(status_code):
-        await cron_table.update_one({"_id":ObjectId(cron_id)}, {"$set": {"schedule.next_execution":upper_execution, "$inc":{"error_count":1}}})
+        await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$set": {"schedule.next_execution": upper_execution}, "$inc": {"error_count": 1}})
         if schedule['notify_on_error']:
             await producer.send("error-mail",{"code":status_code, "email":email})
     else:
