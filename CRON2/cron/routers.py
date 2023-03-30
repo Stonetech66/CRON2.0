@@ -48,8 +48,8 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
     return response
 
 
-@router.delete("/clear-response-history/{cron_id}", status_code=204)
-async def cron_response_history(cron_id:str, user=Depends(get_current_user)):
+@router.delete("/clear-all-response-history/{cron_id}", status_code=204)
+async def delete_response_history(cron_id:str, user=Depends(get_current_user)):
 
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response= await Cron.clear_response_history(cron_id)
@@ -59,3 +59,13 @@ async def cron_response_history(cron_id:str, user=Depends(get_current_user)):
 async def test(access:str):
    await start_test("http//:example.com",access,"https://cron20-production.up.railway.app") 
    return "success" 
+@router.get("/cron-response/{response_id}")
+async def get_response(response_id:str, user=Depends(get_current_user) ):
+     resp= await Cron.get_response(response_id)
+     return resp
+
+@router.delete("/delete-response/{response_id}", status_code=204)
+async def delete_response(response_id:str, user=Depends(get_current_user)):
+    response= await Cron.delete_response(response_id)
+    return "success"
+ 
