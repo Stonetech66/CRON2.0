@@ -32,7 +32,7 @@ class Cron:
         schedule_data['date_created']= datetime.now()
         schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
         cron_data['schedule']=schedule_data
-        cron= await cron_table.insert_one({**cron_data , 'user':user, "error_count":0})
+        cron= await cron_table.insert_one({**cron_data , 'user':{'_id':user['_id'], 'email':user['email']} , "error_count":0})
         return {"_id":cron.inserted_id,**cron_data}
 
     async def get_crons(user_id:str,skip:int=0, limit:int=5, )-> list:
