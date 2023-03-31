@@ -86,7 +86,7 @@ async def consume():
                 await asyncio.gather(*err_tasks)
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
-                consumer.commit()
+                await consumer.commit()
                 logger.info(f"batch consuming finished finsished {datetime.now() - start}")
                
       except Exception as e:
