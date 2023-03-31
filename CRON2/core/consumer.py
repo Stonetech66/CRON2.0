@@ -11,7 +11,7 @@ import logging
 from dotenv import load_dotenv
 from json import JSONEncoder
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-
+import json 
 load_dotenv() 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
