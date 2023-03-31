@@ -49,7 +49,6 @@ async def send_request(session, data, producer):
         status_code = e.status
     except Exception as e:
         status_code = 500
-        logger.error(f"request error {e} ") 
 
     await save_response(schedule, cron_id, status_code,email, producer)
     return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
