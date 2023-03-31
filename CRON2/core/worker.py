@@ -123,7 +123,7 @@ async def start_cron():
     async with AIOKafkaProducer(**producer_conf) as producer:
       try:
         await producer.start()
-        logger.info("worker started 🚀")
+        logger.info("worker started 🚀.")
         while True:
 
             '''A loop that occurs every 1 minute , and calls the main coroutine 
