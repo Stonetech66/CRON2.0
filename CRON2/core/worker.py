@@ -9,6 +9,7 @@ from json import JSONEncoder
 from aiokafka import AIOKafkaProducer
 import os
 from dotenv import load_dotenv
+import logging
 import os
 load_dotenv()
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
