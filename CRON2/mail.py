@@ -28,7 +28,7 @@ async def send_error_email(data):
     message=MessageSchema(
         subject=f'Cron Job Failed',
         recipients=[data['email'],],
-        template_body={'status_code':data['code']},
+        template_body={'status_code':data['code'], 'cron':data['url'] },
         subtype='html'
 
     )
