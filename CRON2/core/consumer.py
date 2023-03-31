@@ -14,7 +14,7 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
 load_dotenv() 
 logger = logging.getLogger(__name__)
-
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 
 def json_deserializer(data):
     return  json.loads(data.decode("utf-8"))
@@ -101,6 +101,5 @@ async def consume():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
     asyncio.run(consume())
     
