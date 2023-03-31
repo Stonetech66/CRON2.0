@@ -5,7 +5,7 @@ import pytz
 def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:int, minutes:int):
 
     if not month == 0:
-        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes)
+        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes, second=0, microsecond=0)
 
 
     elif weekday:
@@ -28,7 +28,7 @@ def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, ho
         return d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0)
     
     elif not hours == 0:
-        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(hours=hours, minutes=minutes, second=0, microsecond=0)
+        return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(hours=hours, minute=minutes, second=0, microsecond=0)
     
     elif minutes:
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(minutes=minutes, second=0, microsecond=0)
