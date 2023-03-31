@@ -1,83 +1,106 @@
-import json
-import sys
-import os
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 import asyncio
 import ssl
 from datetime import datetime
-from .worker import send_requests
+from .worker import send_request
 from ..database import response_table
 from ..mail import send_error_email
 import aiohttp
 import os
+import pytz
+import logging
 from dotenv import load_dotenv
-load_dotenv()
+from json import JsonEncoder
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+
+load_dotenv() 
+logger = logging.getLogger(__name__)
+
 
 def json_deserializer(data):
     return  json.loads(data.decode("utf-8"))
 
-class CustomJsonEncoder(json.JSONEncoder):
+class CustomJsonEncoder(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
         return super().default(o)
     
-server=os.getenv('KAFKA_SERVER')
-kafka_password=os.getenv("KAFKA_PASSWORD")
-kafka_username= os.getenv("KAFKA_USERNAME")
+KAFKA_SERVER = os.getenv('KAFKA_SERVER')
+KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
+KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
+CRON_TOPIC = 'cron-2'
+ERROR_TOPIC = 'error-mail'
 
 async def consume():
-    consumer=AIOKafkaConsumer(
-            'cron-2','error-mail',
-            value_deserializer=json_deserializer,bootstrap_servers=[server], 
-            security_protocol="SASL_SSL", sasl_mechanism="PLAIN", 
-            sasl_plain_username=kafka_username, 
-            sasl_plain_password=kafka_password, 
-            ssl_context=ssl.create_default_context(),
-            auto_offset_reset='earliest',
-            group_id="cron-consumers",
-            session_timeout_ms=50000,
-            heartbeat_interval_ms=15000
+    consumer_conf = {
+        'bootstrap_servers': [KAFKA_SERVER],
+        'security_protocol': "SASL_SSL",
+        'sasl_mechanism': "PLAIN",
+        'sasl_plain_username': KAFKA_USERNAME,
+        'sasl_plain_password': KAFKA_PASSWORD,
+        'ssl_context': ssl.create_default_context(),
+        'auto_offset_reset': 'earliest',
+        'group_id': "cron-consumers",
+        'session_timeout_ms': 50000,
+        'heartbeat_interval_ms': 15000,
+        'value_deserializer': json_deserializer,
+        'max_poll_records':900,
+         'enable_auto_commit': False, 
+    }
+    producer_conf = {
+        'bootstrap_servers': [KAFKA_SERVER],
+        'security_protocol': "SASL_SSL",
+        'sasl_mechanism': "PLAIN",
+        'sasl_plain_username': KAFKA_USERNAME,
+        'sasl_plain_password': KAFKA_PASSWORD,
+        'ssl_context': ssl.create_default_context(),
+        'compression_type': "gzip",
+        'batch_size':32768, 
+        'value_serializer': lambda x: json.dumps(x, cls=CustomJsonEncoder).encode('utf-8'),
+    }
 
-            )
-    producer=AIOKafkaProducer(
-        bootstrap_servers=[server], 
-        security_protocol="SASL_SSL", sasl_mechanism="PLAIN", 
-        sasl_plain_username=kafka_username, 
-        sasl_plain_password=kafka_password, 
-        ssl_context=ssl.create_default_context(),compression_type="gzip", value_serializer=lambda x: json.dumps(x, cls=CustomJsonEncoder).encode('utf-8'))
-
-
-    try:
+    async with AIOKafkaConsumer(CRON_TOPIC, ERROR_TOPIC, **consumer_conf) as consumer, AIOKafkaProducer(**producer_conf) as producer:
+      try:
         await consumer.start()
         await producer.start()
         async with aiohttp.ClientSession() as session:
-            print("started consuming")
-
+            logger.info("Started consuming 🚀")
             while True:
                 cron_tasks=[]
                 err_tasks=[]
-                data=await consumer.getmany(max_records=500, timeout_ms=30000)   
+                data=await consumer.getmany(max_records=900, timeout_ms=30000)   
                 for tp, messages in data.items():
                     for msg in messages:
-                        if msg.topic == "cron-2":
-                            cron_tasks.append(asyncio.create_task(send_requests(session,msg.value, producer)))
-                        elif msg.topic == "error-mail":
-                            print("error-mail {msg.value}") 
+                        if msg.topic == CRON_TOPIC:
+                            schedule=msg.value['schedule'] 
+                            schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
+                            if schedule['next_execution'].astimzone(pytz.timezone(schedule['timezone'])) > datetime.now(tz=pytz.timezone(schedule['timezone'])):
+                               pass
+                            else:
+                               cron_tasks.append(asyncio.create_task(send_request(session,msg.value, producer)))
+                
+                        elif msg.topic == ERROR_TOPIC:
+                            logger.info("error-mail {msg.value}") 
                             err_tasks.append(asyncio.create_task(send_error_email(msg.value)))
                 start=datetime.now()
 
-                data = await asyncio.gather(*cron_tasks)
+                cron_response = await asyncio.gather(*cron_tasks)
                 await asyncio.gather(*err_tasks)
-                print(f" consuming finished {datetime.now() - start}")
-                s=datetime.now()
                 if not data ==[]:
-                    await response_table.insert_many(data)
-                print(f" response update finsished {datetime.now() - s}")
-    finally:
+                    await response_table.insert_many(cron_response)
+                consumer.commit()
+                logger.info(f"batch consuming finished finsished {datetime.now() - start}")
+               
+      except Exception as e:
+        logger.exception(f"Consumer error {e}")
+         
+      finally:
         await consumer.stop()
         await producer.stop()
+        await session.close() 
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
     asyncio.run(consume())
+    
