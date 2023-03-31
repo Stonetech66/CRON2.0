@@ -6,6 +6,7 @@ import aiohttp
 from ..utils import next_execution, error_code
 from bson.objectid import ObjectId
 from json import JSONEncoder
+import json
 from aiokafka import AIOKafkaProducer
 import os
 from dotenv import load_dotenv
