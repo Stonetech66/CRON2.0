@@ -9,7 +9,7 @@ import os
 import pytz
 import logging
 from dotenv import load_dotenv
-from json import JsonEncoder
+from json import JSONEncoder
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
 load_dotenv() 
