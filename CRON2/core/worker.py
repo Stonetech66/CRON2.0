@@ -40,7 +40,6 @@ async def send_request(session, data, producer):
     cron_id= ObjectId(data['cron_id'])
     body= data['body']
     email=data["email"]
-    logger.info(f"{url} {datetime.now()}")
     # sending http requests to the specified endpoint
     try:
         async with getattr(session, method)(url, timeout=timeout, headers=header, json=body) as response:
@@ -50,11 +49,11 @@ async def send_request(session, data, producer):
     except Exception as e:
         status_code = 500
 
-    await save_response(schedule, cron_id, status_code,email, producer)
+    await save_response(schedule, cron_id, status_code,email, url, producer)
     return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
 
 
-async def save_response(schedule:dict, cron_id, status_code, email, producer):
+async def save_response(schedule:dict, cron_id, status_code, email,url, producer):
     year= schedule["years"]
     month=schedule["month"]
     weekday=schedule["weekday"]
@@ -69,7 +68,7 @@ async def save_response(schedule:dict, cron_id, status_code, email, producer):
         try:
             await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$set": {"schedule.next_execution": upper_execution}, "$inc": {"error_count": 1}})
             if schedule['notify_on_error']:
-                await producer.send("error-mail",{"code":status_code, "email":email})
+                await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
         except Exception as e:
             logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
     else:
