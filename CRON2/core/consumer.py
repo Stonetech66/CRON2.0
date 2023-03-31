@@ -87,7 +87,7 @@ async def consume():
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
                 await consumer.commit()
-                logger.info(f"batch consuming finished finsished {datetime.now() - start}")
+                logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
         logger.exception(f"Consumer error {e}")
