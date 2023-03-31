@@ -59,12 +59,8 @@ async def consume():
         'value_serializer': lambda x: json.dumps(x, cls=CustomJsonEncoder).encode('utf-8'),
     }
 
-    async with AIOKafkaConsumer(CRON_TOPIC, ERROR_TOPIC, **consumer_conf) as consumer:
-     async with AIOKafkaProducer(**producer_conf) as producer:
+    async with AIOKafkaConsumer(CRON_TOPIC, ERROR_TOPIC, **consumer_conf) as consumer, AIOKafkaProducer(**producer_conf) as producer:
       try:
-        print("once") 
-        await consumer.start()
-        await producer.start()
         async with aiohttp.ClientSession() as session:
             logger.info("Started consuming 🚀")
             while True:
