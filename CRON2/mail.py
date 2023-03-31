@@ -1,7 +1,10 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from dotenv import load_dotenv
 import os
+import logging
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s") 
 load_dotenv()
 
 password=os.getenv("MAIL_PASSWORD")
@@ -28,13 +31,13 @@ async def send_error_email(data):
     message=MessageSchema(
         subject=f'Cron Job Failed',
         recipients=[data['email'],],
-        template_body={'status_code':data['code'], 'cron':data['url'] },
+        template_body={'status_code':data['code'], 'cron':data['cron'] },
         subtype='html'
 
     )
     f=FastMail(env_config)
     try:
        await f.send_message(message, template_name='error_mail.html') 
-       print("sent") 
+       logger.info("Email sent") 
     except Exception as e:
-        print(f"failed to send {e} ") 
+        logger.error(f"Email failed to send {e} ") 
