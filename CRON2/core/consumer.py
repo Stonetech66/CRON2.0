@@ -55,7 +55,7 @@ async def consume():
         'sasl_plain_password': KAFKA_PASSWORD,
         'ssl_context': ssl.create_default_context(),
         'compression_type': "gzip",
-        'batch_size':32768, 
+        'max_batch_size':32768, 
         'value_serializer': lambda x: json.dumps(x, cls=CustomJsonEncoder).encode('utf-8'),
     }
 
