@@ -68,4 +68,8 @@ async def get_response(response_id:str, user=Depends(get_current_user) ):
 async def delete_response(response_id:str, user=Depends(get_current_user)):
     response= await Cron.delete_response(response_id)
     return "success"
- 
+
+@router.get("timeout")
+async def timeout(time:int):
+   await asyncio.sleep(time)
+   return "success" 
