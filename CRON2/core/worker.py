@@ -36,7 +36,6 @@ async def send_request(session, data, producer):
     method=data['method']
     header=data['header']
     schedule= data['schedule']
-    schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
     url= data['url']
     cron_id= ObjectId(data['cron_id'])
     body= data['body']
