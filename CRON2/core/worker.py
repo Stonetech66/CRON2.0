@@ -19,7 +19,7 @@ CRON_TOPIC = 'cron-2'
 CRON_MAX_FAILURES=3 
 REQUEST_TIMEOUT=30 #time in seconds
 logger = logging.getLogger(__name__)
-
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 class CustomJsonEncoder(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
@@ -141,7 +141,6 @@ async def start_cron():
          await producer.stop()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
     asyncio.run(start_cron())
 
 
