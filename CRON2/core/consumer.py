@@ -71,7 +71,6 @@ async def consume():
                     for msg in messages:
                         if msg.topic == CRON_TOPIC:
                             schedule=msg.value['schedule'] 
-                            schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
                             if schedule['next_execution'].astimezone(pytz.timezone(schedule['timezone'])) > datetime.now(tz=pytz.timezone(schedule['timezone'])):
                                pass
                             else:
