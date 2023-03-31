@@ -5,7 +5,7 @@ import pytz, ssl
 import aiohttp
 from ..utils import next_execution, error_code
 from bson.objectid import ObjectId
-from json import JsonEncoder
+from json import JSONEncoder
 from aiokafka import AIOKafkaProducer
 import os
 from dotenv import load_dotenv
