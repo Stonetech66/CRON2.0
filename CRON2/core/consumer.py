@@ -44,7 +44,7 @@ async def consume():
         'session_timeout_ms': 50000,
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
-        'max_poll_records':900,
+        'max_poll_records':700,
          'enable_auto_commit': False, 
     }
     producer_conf = {
@@ -66,7 +66,7 @@ async def consume():
             while True:
                 cron_tasks=[]
                 err_tasks=[]
-                data=await consumer.getmany(max_records=900, timeout_ms=30000)   
+                data=await consumer.getmany(max_records=700, timeout_ms=38000)   
                 for tp, messages in data.items():
                     for msg in messages:
                         if msg.topic == CRON_TOPIC:
