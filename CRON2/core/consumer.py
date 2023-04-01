@@ -45,7 +45,7 @@ async def consume():
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
         'max_poll_records':500,
-         max_poll_interval_ms':50000,
+         'max_poll_interval_ms':50000,
         'enable_auto_commit': False, 
         '
     }
