@@ -10,6 +10,7 @@ from .crud import Cron
 from ..dependencies import get_current_user
 from bson.objectid import ObjectId
 from ..test import start_test 
+import asyncio
 cron=Cron
 
 
@@ -69,7 +70,7 @@ async def delete_response(response_id:str, user=Depends(get_current_user)):
     response= await Cron.delete_response(response_id)
     return "success"
 
-@router.get("timeout")
+@router.get("/timeout")
 async def timeout(time:int):
    await asyncio.sleep(time)
    return "success" 
