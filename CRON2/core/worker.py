@@ -47,6 +47,7 @@ async def send_request(session, data, producer):
     except aiohttp.ClientResponseError as e:
         status_code = e.status
     except Exception as e:
+        logger.exception(f"{e}")
         status_code = 500
 
     await save_response(schedule, cron_id, status_code,email, url, producer)
