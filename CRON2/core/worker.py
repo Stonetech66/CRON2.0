@@ -42,7 +42,7 @@ async def send_request(session, data, producer):
     email=data["email"]
     # sending http requests to the specified endpoint
     try:
-        async with getattr(session, method)(url, timeout=timeout, headers=header, json=body) as response:
+        async with getattr(session, method)(url, headers=header, json=body) as response:
             status_code = response.status
     except aiohttp.ClientResponseError as e:
         status_code = e.status
