@@ -68,9 +68,9 @@ async def consume():
               async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
-                data=await consumer.getmany(max_records=500, timeout_ms=50000)   
-                for tp, messages in data.items():
-                    for msg in messages:
+                messages=await consumer.getmany(max_records=500, timeout_ms=50000)   
+                for tp, msgs in messages.items():
+                    for msg in msgs:
                         if msg.topic == CRON_TOPIC:
                             schedule=msg.value['schedule'] 
                             schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
@@ -88,7 +88,10 @@ async def consume():
                 await asyncio.gather(*err_tasks)
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
-                await consumer.commit()
+                await consumer.commit({
+                tp: msgs[-1].offset + 1
+                for tp, msgs in messages.items()
+                })
                 logger.info(f"batch consuming finished finsished {len(cron_tasks)} {cron_response} {datetime.now() - start}")
                
       except Exception as e:
