@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from .schema import CronSchema, CronSchemaDetails, Response
-from ..database import cron_table, db
+from ..database import cron_table, db, response_table
 from .crud import Cron
 from ..dependencies import get_current_user
 from bson.objectid import ObjectId
@@ -74,3 +74,9 @@ async def delete_response(response_id:str, user=Depends(get_current_user)):
 async def timeout(time:int):
    await asyncio.sleep(time)
    return "success" 
+
+@router.get("/count")
+async def timeout():
+   count= await response_table.count_documents({})
+   return count 
+
