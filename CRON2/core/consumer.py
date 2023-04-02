@@ -89,11 +89,12 @@ async def consume():
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
                 # commit offsets
-                last_offset = {}
-                for tp, msgs in messages.items():
+                if messages:
+                  last_offset = {}
+                  for tp, msgs in messages.items():
                     last_offset[tp] = msgs[-1].offset + 1
 
-                await consumer.commit(last_offset)
+                  await consumer.commit(last_offset)
                 logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
