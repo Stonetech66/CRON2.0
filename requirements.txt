@@ -16,3 +16,4 @@ pytest
 fastapi-mail
 passlib
 fastapi-mail
+httpx
