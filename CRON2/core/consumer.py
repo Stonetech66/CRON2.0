@@ -69,7 +69,7 @@ async def consume():
               async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
-                messages=await consumer.getmany(max_records=KAFKA_MAX_RECORD, KAFKA_TIMEOUT=40000)   
+                messages=await consumer.getmany(max_records=KAFKA_MAX_RECORD, timeout=KAFKA_TIMEOUT)   
                 for tp, msgs in messages.items():
                     for msg in msgs:
                         if msg.topic == CRON_TOPIC:
