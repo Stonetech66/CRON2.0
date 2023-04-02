@@ -24,7 +24,7 @@ class CustomJsonEncoder(JSONEncoder):
         if isinstance(o, datetime):
             return o.isoformat()
         return super().default(o)
- timeout=aiohttp.ClientTimeout(total=30)  
+timeout=aiohttp.ClientTimeout(total=30)  
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
