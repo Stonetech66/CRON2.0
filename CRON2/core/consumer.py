@@ -24,7 +24,7 @@ class CustomJsonEncoder(JSONEncoder):
         if isinstance(o, datetime):
             return o.isoformat()
         return super().default(o)
-    
+ timeout=aiohttp.ClientTimeout(total=30)  
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
@@ -63,9 +63,9 @@ async def consume():
 
     async with AIOKafkaConsumer(CRON_TOPIC, ERROR_TOPIC, **consumer_conf) as consumer, AIOKafkaProducer(**producer_conf) as producer:
       try:
-        async with aiohttp.ClientSession() as session:
             logger.info("Started consuming 🚀")
             while True:
+              async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
                 data=await consumer.getmany(max_records=500, timeout_ms=50000)   
