@@ -30,8 +30,8 @@ KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
 CRON_TOPIC = 'cron-2'
 ERROR_TOPIC = 'error-mail'
-KAFKA_TIMEOUT=os.getenv("KAFKA_TIMEOUT")
-KAFKA_MAX_RECORD=os.getenv("KAFKA_MAX_RECORD")
+KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT")) 
+KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD")) 
 async def consume():
     consumer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
