@@ -102,6 +102,7 @@ async def cron_job(producer):
                 task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "cron_id":cron_id, "method":method, "schedule":schedule, "header":header, "body":body, "email":email}))
                 tasks.append(task)
         await asyncio.gather(*tasks)
+        logger.info(len(tasks))
       except Exception as e:
         logger.error(f"Error in CronJob: {e}")
 
