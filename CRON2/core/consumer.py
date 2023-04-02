@@ -30,7 +30,8 @@ KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
 CRON_TOPIC = 'cron-2'
 ERROR_TOPIC = 'error-mail'
-
+KAFKA_TIMEOUT=os.getenv("KAFKA_TIMEOUT")
+KAFKA_MAX_RECORD=os.getenv("KAFKA_MAX_RECORD")
 async def consume():
     consumer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
@@ -44,9 +45,9 @@ async def consume():
         'session_timeout_ms': 50000,
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
-        'max_poll_records':250,
+        'max_poll_records':KAFKA_MAX_RECORD,
         'max_poll_interval_ms':50000,
-        'enable_auto_commit': False, 
+        'enable_auto_commit': True, 
         
     }
     producer_conf = {
@@ -68,7 +69,7 @@ async def consume():
               async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
-                messages=await consumer.getmany(max_records=250, timeout_ms=40000)   
+                messages=await consumer.getmany(max_records=KAFKA_MAX_RECORD, KAFKA_TIMEOUT=40000)   
                 for tp, msgs in messages.items():
                     for msg in msgs:
                         if msg.topic == CRON_TOPIC:
@@ -89,12 +90,12 @@ async def consume():
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
                 # commit offsets
-                if messages:
-                  last_offset = {}
-                  for tp, msgs in messages.items():
-                    last_offset[tp] = msgs[-1].offset + 1
+                #if messages:
+                #  last_offset = {}
+                #  for tp, msgs in messages.items():
+                #    last_offset[tp] = msgs[-1].offset + 1
 
-                  await consumer.commit(last_offset)
+                #  await consumer.commit(last_offset)
                 logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
