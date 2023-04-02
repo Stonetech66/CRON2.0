@@ -18,7 +18,7 @@ KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
 CRON_TOPIC = 'cron-2'
 CRON_MAX_FAILURES=3 
-REQUEST_TIMEOUT=35 #time in seconds
+REQUEST_TIMEOUT=30 #time in seconds
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
 class CustomJsonEncoder(JSONEncoder):
