@@ -46,8 +46,8 @@ async def consume():
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
         'max_poll_records':KAFKA_MAX_RECORD,
-        'max_poll_interval_ms':50000,
-        'enable_auto_commit': True, 
+        'max_poll_interval_ms':59000,
+        'enable_auto_commit': False, 
         
     }
     producer_conf = {
@@ -69,7 +69,9 @@ async def consume():
               async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
-                messages=await consumer.getmany(max_records=KAFKA_MAX_RECORD, timeout_ms=KAFKA_TIMEOUT)   
+                messages=await consumer.getmany(max_records=KAFKA_MAX_RECORD, timeout_ms=KAFKA_TIMEOUT)
+                if not messages:
+                    continue
                 for tp, msgs in messages.items():
                     for msg in msgs:
                         if msg.topic == CRON_TOPIC:
@@ -96,6 +98,7 @@ async def consume():
                 #    last_offset[tp] = msgs[-1].offset + 1
 
                 #  await consumer.commit(last_offset)
+                await consumer.commit() 
                 logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
