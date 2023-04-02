@@ -94,7 +94,7 @@ async def consume():
                     last_offset[tp] = msgs[-1].offset + 1
 
                 await consumer.commit(last_offset)
-                logger.info(f"batch consuming finished finsished {len(cron_tasks)} {cron_response} {datetime.now() - start}")
+                logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
         logger.exception(f"Consumer error {e}")
