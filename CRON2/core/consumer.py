@@ -32,6 +32,7 @@ CRON_TOPIC = 'cron-2'
 ERROR_TOPIC = 'error-mail'
 KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT")) 
 KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD")) 
+KAFKA_MAX_POLL_INTERVAL=int(os.getenv('KAFKA_MAX_POLL_INTERVAL'))
 async def consume():
     consumer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
@@ -46,7 +47,7 @@ async def consume():
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
         'max_poll_records':KAFKA_MAX_RECORD,
-        'max_poll_interval_ms':59000,
+        'max_poll_interval_ms':KAFKA_MAX_POLL_INTERVAL,
         'enable_auto_commit': False, 
         
     }
