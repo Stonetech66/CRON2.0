@@ -44,7 +44,7 @@ async def consume():
         'session_timeout_ms': 50000,
         'heartbeat_interval_ms': 15000,
         'value_deserializer': json_deserializer,
-        'max_poll_records':500,
+        'max_poll_records':250,
         'max_poll_interval_ms':50000,
         'enable_auto_commit': False, 
         
@@ -68,7 +68,7 @@ async def consume():
               async with aiohttp.ClientSession() as session:
                 cron_tasks=[]
                 err_tasks=[]
-                messages=await consumer.getmany(max_records=500, timeout_ms=50000)   
+                messages=await consumer.getmany(max_records=250, timeout_ms=40000)   
                 for tp, msgs in messages.items():
                     for msg in msgs:
                         if msg.topic == CRON_TOPIC:
