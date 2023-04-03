@@ -66,7 +66,7 @@ async def error_mail_producer(cron_id, status_code, email,url, producer):
         except Exception as e:
             logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
 
-async def update_record(record, schedule):
+async def update_cron(record, schedule):
     year= schedule["years"]
     month=schedule["month"]
     weekday=schedule["weekday"]
