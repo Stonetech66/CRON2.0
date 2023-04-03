@@ -14,25 +14,16 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 import json 
 load_dotenv() 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
-
-def json_deserializer(data):
-    return  json.loads(data.decode("utf-8"))
-
-class CustomJsonEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime):
-            return o.isoformat()
-        return super().default(o)
-timeout=aiohttp.ClientTimeout(total=30)  
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s") 
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
 CRON_TOPIC = 'cron-2'
 ERROR_TOPIC = 'error-mail'
-KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT")) 
-KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD")) 
-KAFKA_MAX_POLL_INTERVAL=int(os.getenv('KAFKA_MAX_POLL_INTERVAL'))
+KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT", 40000)) 
+KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD",500)) 
+KAFKA_MAX_POLL_INTERVAL=int(os.getenv('KAFKA_MAX_POLL_INTERVAL',50000))
+
 async def consume():
     consumer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
@@ -75,32 +66,18 @@ async def consume():
                     continue
                 for tp, msgs in messages.items():
                     for msg in msgs:
-                        if msg.topic == CRON_TOPIC:
-                            schedule=msg.value['schedule'] 
-                            schedule.update({'next_execution': datetime.fromisoformat(schedule['next_execution'])})
-                            if schedule['next_execution'].astimezone(pytz.timezone(schedule['timezone'])) > datetime.now(tz=pytz.timezone(schedule['timezone'])):
-                               pass
-                            else:
-                               cron_tasks.append(asyncio.create_task(send_request(session,msg.value, producer)))
+                        if msg.topic == CRON_TOPIC:                            
+                           cron_tasks.append(asyncio.create_task(send_request(session,msg.value, producer)))
                 
-                        elif msg.topic == ERROR_TOPIC:
-                            logger.info("error-mail {msg.value}") 
+                        elif msg.topic == ERROR_TOPIC:                             
                             err_tasks.append(asyncio.create_task(send_error_email(msg.value)))
+                            logger.info("error-mail")
                 start=datetime.now()
-
                 cron_response = await asyncio.gather(*cron_tasks)
                 await asyncio.gather(*err_tasks)
-                await consumer.commit()
                 if cron_response != []:
                     await response_table.insert_many(cron_response)
-                # commit offsets
-                #if messages:
-                #  last_offset = {}
-                #  for tp, msgs in messages.items():
-                #    last_offset[tp] = msgs[-1].offset + 1
-
-                #  await consumer.commit(last_offset)
-               
+                await consumer.commit() 
                 logger.info(f"batch consuming finished finsished {len(cron_tasks)} {datetime.now() - start}")
                
       except Exception as e:
