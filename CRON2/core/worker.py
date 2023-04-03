@@ -34,7 +34,7 @@ class CustomJsonEncoder(JSONEncoder):
 
 
 
-async def send_request(session, data,notify_on_error, producer):
+async def send_request(session, data, producer):
     method=data['method']
     header=data['header']
     url= data['url']
@@ -53,7 +53,7 @@ async def send_request(session, data,notify_on_error, producer):
         logger.exception(f"{e}")
         status_code = 500
     try:
-       await error_mail_producer(cron_id, status_code,email, url, notify_on_error, producer)
+       await error_mail_producer(cron_id, status_code,email, url, data['notify_on_error'], producer)
     except Exception as e:
        logger.exception(e) 
     return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
