@@ -24,6 +24,15 @@ KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT", 40000))
 KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD",500)) 
 KAFKA_MAX_POLL_INTERVAL=int(os.getenv('KAFKA_MAX_POLL_INTERVAL',50000))
 
+def json_deserializer(data):
+    return  json.loads(data.decode("utf-8"))
+
+class CustomJsonEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        return super().default(o)
+
 async def consume():
     consumer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
