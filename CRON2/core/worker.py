@@ -34,7 +34,7 @@ class CustomJsonEncoder(JSONEncoder):
 
 
 
-async def send_request(session, data, producer):
+async def send_request(session, data,notify_on_error, producer):
     method=data['method']
     header=data['header']
     url= data['url']
@@ -52,16 +52,18 @@ async def send_request(session, data, producer):
     except Exception as e:
         logger.exception(f"{e}")
         status_code = 500
-
-    await error_mail_producer(cron_id, status_code,email, url, producer)
+    try:
+       await error_mail_producer(cron_id, status_code,email, url, notify_on_error, producer)
+    except Exception as e:
+       logger.exception(e) 
     return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
 
 
-async def error_mail_producer(cron_id, status_code, email,url, producer):
+async def error_mail_producer(cron_id, status_code, email,url,notify_on_error, producer):
     if error_code(status_code):
         try:
             await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$inc": {"error_count": 1}})
-            if schedule['notify_on_error']:
+            if notify_on_error:
                 await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
         except Exception as e:
             logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
@@ -100,7 +102,7 @@ async def cron_job(producer):
                 header=cron["headers"]
                 body=cron["body"]
                 email=cron["user"]["email"]
-                task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "cron_id":cron_id, "method":method, "schedule":schedule, "header":header, "body":body, "email":email}))
+                task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "cron_id":cron_id, "method":method, "header":header, "body":body, "email":email, "notify_on_error":schedule["notify_on_error"]}))
                 tasks.append(task)
                 u_task=asyncio.create_task(update_cron(cron, schedule)) 
                 update_crons.append(u_task)
