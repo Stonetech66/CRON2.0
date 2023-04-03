@@ -21,21 +21,22 @@ CRON_MAX_FAILURES=3
 REQUEST_TIMEOUT=30 #time in seconds
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
+
+timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
+max_failures=CRON_MAX_FAILURES
+
 class CustomJsonEncoder(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
         return super().default(o)
 
-timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
-max_failures=CRON_MAX_FAILURES
 
 
 
 async def send_request(session, data, producer):
     method=data['method']
     header=data['header']
-    schedule= data['schedule']
     url= data['url']
     cron_id= ObjectId(data['cron_id'])
     body= data['body']
@@ -52,11 +53,20 @@ async def send_request(session, data, producer):
         logger.exception(f"{e}")
         status_code = 500
 
-    await save_response(schedule, cron_id, status_code,email, url, producer)
+    await error_mail_producer(cron_id, status_code,email, url, producer)
     return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
 
 
-async def save_response(schedule:dict, cron_id, status_code, email,url, producer):
+async def error_mail_producer(cron_id, status_code, email,url, producer):
+    if error_code(status_code):
+        try:
+            await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$inc": {"error_count": 1}})
+            if schedule['notify_on_error']:
+                await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
+        except Exception as e:
+            logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
+
+async def update_record(record, schedule):
     year= schedule["years"]
     month=schedule["month"]
     weekday=schedule["weekday"]
@@ -64,27 +74,18 @@ async def save_response(schedule:dict, cron_id, status_code, email,url, producer
     hours=schedule["hours"]
     minute=schedule["minutes"]
     timezone=schedule["timezone"]
+
     # finding the next execution of the cron and updating the table
     upper_execution= next_execution(timezone, year, month, weekday, day, hours, minute)
+    cron_table.update_one({"_id": record["_id"]}, {"$set": {"schedule.next_execution": upper_execution}, "$inc": {"error_count": 1}})
 
-    if error_code(status_code):
-        try:
-            await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$set": {"schedule.next_execution": upper_execution}, "$inc": {"error_count": 1}})
-            if schedule['notify_on_error']:
-                await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
-        except Exception as e:
-            logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
-    else:
-        try:
-            await cron_table.update_one({"_id":ObjectId(cron_id)}, {"$set": {"schedule.next_execution":upper_execution}})
-        except Exception as e:
-            logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
-
+      
 
 
 async def cron_job(producer):
       try:
         tasks=[]
+        update_crons=[] 
         # filtering through the database to find crons whose schedule time are less than or equal to the current UTC time
         async for cron in cron_table.find({"schedule.next_execution":{"$lte": datetime.now(tz=pytz.timezone("UTC"))}, "error_count":{"$lt":max_failures}}):
             next_execution=cron['schedule']["next_execution"]
@@ -101,7 +102,10 @@ async def cron_job(producer):
                 email=cron["user"]["email"]
                 task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "cron_id":cron_id, "method":method, "schedule":schedule, "header":header, "body":body, "email":email}))
                 tasks.append(task)
+                u_task=asyncio.create_task(update_cron(cron, schedule)) 
+                update_crons.append(u_task)
         await asyncio.gather(*tasks)
+        await asyncio.gather(*update_crons) 
         logger.info(len(tasks))
       except Exception as e:
         logger.error(f"Error in CronJob: {e}")
@@ -109,7 +113,7 @@ async def cron_job(producer):
 
 
 
-async def start_cron():
+async def start_cron_job():
     producer_conf = {
         'bootstrap_servers': [KAFKA_SERVER],
         'security_protocol': "SASL_SSL",
@@ -143,7 +147,7 @@ async def start_cron():
          await producer.stop()
 
 if __name__ == "__main__":
-    asyncio.run(start_cron())
+    asyncio.run(start_cron_job())
 
 
 
