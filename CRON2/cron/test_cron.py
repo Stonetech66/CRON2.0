@@ -1,19 +1,18 @@
 from fastapi.testclient import TestClient
-from fastapi import HTTPException 
+from fastapi import HTTPException, Header
 from ..main import app
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, AsyncMock
 from CRON2.dependencies import get_current_user 
 from .crud import Cron
+from bson.objectid import ObjectId 
 client = TestClient(app)
 
 async def auth_user():
- return {
-    '_id' : '', 
-    'email': 'cron@gmail.com', 
-    'fullname': 'cronn job'
-    }
+ return {'_id' : ObjectId('642c2d7ea0209c97a399b869'), 'email': 'cron@gmail.com', 'fullname': 'cronn job'}
+
 async def unauth_user():
   raise HTTPException(detail='invalid token or token has expired', status_code=401)
+
 auth_header={'Authorization': 'Bearer Xxxxxxxxxxx'}
 
 
@@ -21,7 +20,7 @@ auth_header={'Authorization': 'Bearer Xxxxxxxxxxx'}
 def test_get_crons():
     # Authenticated Request 
     app.dependency_overrides[get_current_user] = auth_user
-    Cron.get_crons=MagicMock(return_value=[]) 
+    Cron.get_crons=AsyncMock(return_value=[]) 
     resp=client.get('/v1/crons', headers=auth_header)
     assert resp.status_code == 200
     assert resp.json() == []
@@ -46,7 +45,7 @@ def test_get_cron():
     "timezone": "Africa/Lagos","date_created": "2023-04-04T14:00:30.681282",
     "next_execution": "2023-04-10T09:00:00+01:00" }
     }
-    Cron.get_cron= MagicMock(return_value=response_data)
+    Cron.get_cron= AsyncMock(return_value=response_data)
     resp=client.get('/v1/cron/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 200
     assert resp.json() == cron_data
