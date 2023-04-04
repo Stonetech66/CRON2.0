@@ -17,13 +17,13 @@ def test_get_crons():
     # Authenticated Request 
     get_current_user= MagicMock(return_value=auth_user) 
     Cron.get_crons=MagicMock(return_value=[]) 
-    resp=client.get('api/v1/crons', headers=auth_header)
+    resp=client.get('/v1/crons', headers=auth_header)
     assert resp.status_code == 200
     assert resp.json() == []
 
     # Unauthenticated Request 
     get_current_user= MagicMock(side_effect=unauth_user)
-    resp=client.get('/api/v1/crons')
+    resp=client.get('/v1/crons')
     assert resp.status_code == 401
 
 
