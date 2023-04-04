@@ -21,7 +21,7 @@ async def add_cron(schema:CronSchema, user=Depends(get_current_user)):
     result =await Cron.create_cron(schema, user)
     return result
 
-@router.get('/crons', response_model=List[CronSchemaDetails] response_model_exclude_unset=True)
+@router.get('/crons', response_model=List[CronSchemaDetails], response_model_exclude_unset=True)
 async def get_crons(limit:int=10, skip:int=0, user=Depends(get_current_user)):
     cron= await Cron.get_crons(skip=skip, limit=limit, user_id=str(user["_id"]))
     return cron
