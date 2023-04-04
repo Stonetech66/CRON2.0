@@ -15,7 +15,7 @@ unauth_user= HTTPException(detail='invalid token or token has expired', status_c
 auth_header={'Authorization': 'Bearer Xxxxxxxxxxx'}
 def test_get_crons():
     # Authenticated Request 
-    get_current_user= MagicMock(return_value=auth_user) 
+    app.dependency_overrides[get_current_user] = MagicMock(return_value=auth_user) 
     Cron.get_crons=MagicMock(return_value=[]) 
     resp=client.get('/v1/crons', headers=auth_header)
     assert resp.status_code == 200
