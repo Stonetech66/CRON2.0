@@ -45,7 +45,7 @@ def test_get_cron():
     # Unauthenticated Request 
     get_currrent_user= MagicMock(side_effect=unauth_user)
     resp=client.get('/api/v1/cron/642c2d7ea0209c97a399b860')
-    assert resp.status_code =401
+    assert resp.status_code == 401
     assert resp.json() == auth_error
     
     # Invalid Cron Id
