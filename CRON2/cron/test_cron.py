@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from fastapi import HTTPException 
 from ..main import app
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from ..dependencies import get_current_user 
 from .crud import Cron
 client = TestClient(app)
@@ -13,16 +13,19 @@ auth_user={
 }
 unauth_user= HTTPException(detail='invalid token or token has expired', status_code=401)
 auth_header={'Authorization': 'Bearer Xxxxxxxxxxx'}
+
+
+
 def test_get_crons():
-    # Authenticated Request 
-    app.dependency_overrides[get_current_user] = MagicMock(return_value=auth_user) 
+  # Authenticated Request 
+  with patch('CRON2.dependencies.get_current_user', MagicMock(return_value=auth_user)) :
     Cron.get_crons=MagicMock(return_value=[]) 
     resp=client.get('/v1/crons', headers=auth_header)
     assert resp.status_code == 200
     assert resp.json() == []
 
-    # Unauthenticated Request 
-    get_current_user= MagicMock(side_effect=unauth_user)
+  # Unauthenticated Request
+  with patch('CRON2.dependencies.get_current_user', MagicMock(side_effect=unauth_user)) : 
     resp=client.get('/v1/crons')
     assert resp.status_code == 401
 
