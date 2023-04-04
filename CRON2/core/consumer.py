@@ -18,9 +18,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(mess
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
-CRON_TOPIC = 'cron-2'
-ERROR_TOPIC = 'error-mail'
-KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT", 40000)) 
+CRON_TOPIC =os.getenv('CRON_TOPIC') 
+ERROR_TOPIC = os.getenv('ERROR_TOPIC')
+KAFKA_TIMEOUT=int(os.getenv("KAFKA_TIMEOUT", 45000)) 
 KAFKA_MAX_RECORD=int(os.getenv("KAFKA_MAX_RECORD",500)) 
 KAFKA_MAX_POLL_INTERVAL=int(os.getenv('KAFKA_MAX_POLL_INTERVAL',50000))
 

@@ -17,13 +17,13 @@ class Methods(str,Enum):
 
 
 class Weekdays(str, Enum):
-    monday='MO'
-    tuesday= 'TU'
-    wednesday='WE'
-    thursday='TH'
-    friday='FR'
-    saturday='SA'
-    sunday='SU'
+    monday='MON'
+    tuesday= 'TUE'
+    wednesday='WED'
+    thursday='THU'
+    friday='FRI'
+    saturday='SAT'
+    sunday='SUN'
 
 
 class MongoId(str):
@@ -69,7 +69,7 @@ class  CronSchema(BaseModel):
     
 
     class Config:
-
+        extra="forbid"
         schema_extra={
             "example":
             {
@@ -77,7 +77,7 @@ class  CronSchema(BaseModel):
                 "method": "get",
                 "headers": {"Authorization": "Bearer xxxxxxx"},
                 "timezone":"Africa/Lagos",
-                "weekday":"MO",
+                "weekday":"MON",
                 "hours":9,
                 "minutes":0,
                 "notify_on_error": False
@@ -113,7 +113,8 @@ class  CronSchema(BaseModel):
 
 class Response(ID):
     status_code:int
-    date:datetime
+    timestamp:datetime
+
 class CronSchemaDetails(CronBase, ID):
     schedule:dict
     class Config:

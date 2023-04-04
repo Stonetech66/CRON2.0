@@ -9,7 +9,7 @@ def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, ho
 
 
     elif weekday:
-        weekdays = {'MO': MO, 'TU': TU, 'WE': WE, 'TH': TH, 'FR': FR, 'SA': SA, 'SU': SU}
+        weekdays = {'MON': MO, 'TUE': TU, 'WED': WE, 'THU': TH, 'FRI': FR, 'SAT': SA, 'SUN': SU}
         dt_now = datetime.now(pytz.timezone(timezone))
         next_dt = dt_now + relativedelta(weekday=weekdays[weekday], hour=hours, minute=minutes, second=0, microsecond=0)
         if str(dt_now.strftime('%a')[:2]).upper() == weekday and next_dt <= dt_now:
@@ -47,7 +47,7 @@ def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:i
 
 
     elif weekday:
-        weekdays = {'MO': MO, 'TU': TU, 'WE': WE, 'TH': TH, 'FR': FR, 'SA': SA, 'SU': SU}
+        weekdays = {'MON': MO, 'TUE': TU, 'WED': WE, 'THU': TH, 'FRI': FR, 'SAT': SA, 'SUN': SU}
         dt_now = datetime.now(pytz.timezone(timezone))
         next_dt = dt_now + relativedelta(weekday=weekdays[weekday](+1), days=+1, hour=hours, minute=minutes, second=0, microsecond=0)
          

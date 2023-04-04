@@ -16,7 +16,8 @@ load_dotenv()
 KAFKA_SERVER = os.getenv('KAFKA_SERVER')
 KAFKA_PASSWORD = os.getenv("KAFKA_PASSWORD")
 KAFKA_USERNAME = os.getenv("KAFKA_USERNAME")
-CRON_TOPIC = 'cron-2'
+CRON_TOPIC = os.getenv('CRON_TOPIC')
+ERROR_TOPIC= os.getenv('ERROR_TOPIC')
 CRON_MAX_FAILURES=3 
 REQUEST_TIMEOUT=30 #time in seconds
 logger = logging.getLogger(__name__)
@@ -107,8 +108,9 @@ async def cron_job(producer):
                 u_task=asyncio.create_task(update_cron(cron, schedule)) 
                 update_crons.append(u_task)
         await asyncio.gather(*tasks)
-        await asyncio.gather(*update_crons) 
-        logger.info(len(tasks))
+        await asyncio.gather(*update_crons)
+        if len(tasks) > 0:
+           logger.info(len(tasks))
       except Exception as e:
         logger.error(f"Error in CronJob: {e}")
 
