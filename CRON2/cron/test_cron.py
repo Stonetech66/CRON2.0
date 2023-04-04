@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from fastapi import HTTPException 
 from ..main import app
 from unittest.mock import MagicMock, patch
-from ..dependencies import get_current_user 
+from CRON2.dependencies import get_current_user 
 from .crud import Cron
 client = TestClient(app)
 
