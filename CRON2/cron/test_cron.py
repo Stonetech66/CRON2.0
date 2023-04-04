@@ -9,7 +9,7 @@ client = TestClient(app)
 auth_user={
     '_id' : '', 
     'email': 'cron@gmail.com', 
-    'fullname': 'cron'
+    'fullname': 'cronn job'
 }
 unauth_user= HTTPException(detail='invalid token or token has expired', status_code=401)
 auth_header={'Authorization': 'Bearer Xxxxxxxxxxx'}
@@ -24,7 +24,7 @@ def test_get_crons():
     # Unauthenticated Request 
     get_currrent_user= MagicMock(side_effect=unauth_user)
     resp=client.get('/api/v1/crons')
-    assert resp.status_code =401
+    assert resp.status_code == 401
 
 
 def test_get_cron():
@@ -52,7 +52,7 @@ def test_get_cron():
     get_currrent_user= MagicMock(return_value=auth_user)
     Cron.get_cron= MagicMock(return_value=)
     resp=client.get('/api/v1/cron/642c2d7ea0209c97a399b899')
-    assert resp.status_code =404
+    assert resp.status_code == 404
 
 
 
