@@ -76,11 +76,11 @@ def test_update_cron():
     resp=client.put('/api/v1/update-cron/642c2d7ea0209c97a399b860', json=update_json)
     assert resp.status_code == 401
    
-   # invalid Cron ID 
-   get_currrent_user= MagicMock(return_value=auth_user)
-   Cron.update_cron = MagicMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-   resp=client.put('/api/v1/update-cron/642c2d7ea0209c97a399b756', headers=auth_header, json=json)
-   assert resp.status_code == 404
+    # invalid Cron ID 
+    get_currrent_user= MagicMock(return_value=auth_user)
+    Cron.update_cron = MagicMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
+    resp=client.put('/api/v1/update-cron/642c2d7ea0209c97a399b756', headers=auth_header, json=json)
+    assert resp.status_code == 404
 
 
 def test_delete_cron():
