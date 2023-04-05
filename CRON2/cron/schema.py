@@ -112,7 +112,7 @@ class  CronSchema(BaseModel):
 
 
 class Response(ID):
-    status_code:int
+    status:int
     timestamp:datetime
 
 class CronSchemaDetails(CronBase, ID):
