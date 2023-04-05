@@ -201,11 +201,12 @@ def test_get_response():
     app.dependency_overrides[get_current_user] = auth_user   
     response_data={
     "_id" :ObjectId("642c2d7ea0578c97a566b790"), 
-    "status":200 , "timestamp":str(datetime.utcnow())} 
+    "status":200 , "timestamp":datetime.utcnow()} 
     Cron.get_response=AsyncMock(return_value=response_data) 
     resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b790', headers=auth_header)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
+    response_data["timestamp"] = response_data["timestamp"].strftime('%Y-%m-%dT%H:%M:%S.%f')
     assert resp.json() == response_data
 
     # Unauthenticated Request 
