@@ -49,7 +49,7 @@ async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depen
     return response
 
 
-@router.delete("/clear-all-response-history/{cron_id}", status_code=204)
+@router.delete("/clear-cron-response-history/{cron_id}", status_code=204)
 async def delete_response_history(cron_id:str, user=Depends(get_current_user)):
 
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
