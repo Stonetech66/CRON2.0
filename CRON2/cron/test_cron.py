@@ -34,7 +34,8 @@ def test_create_cron_valid_data():
      }    
     resp= client.post('/v1/add-cron', headers=auth_header, json=create_json)
     assert resp.status_code == 201
-    assert resp.json() == response_data.update({"_id":str(response_data["_id"])}) 
+    response= response_data.update({"_id":str(response_data["_id"])})  
+    assert resp.json() == response
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
@@ -77,8 +78,8 @@ def test_get_cron():
     Cron.get_cron= AsyncMock(return_value=response_data)
     resp=client.get('/v1/cron/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 200
-    assert resp.json() == response_data.update({"_id":str(response_data["_id"])}) 
-
+    response= response_data.update({"_id":str(response_data["_id"])})  
+    assert resp.json() == response
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
     resp=client.get('/v1/cron/642c2d7ea0209c97a399b860')
@@ -111,8 +112,8 @@ def test_update_cron():
      }    
     resp= client.put('/v1/update-cron/642c2d7ea0209c97a399b860', headers=auth_header, json=update_json)
     assert resp.status_code == 200
-    assert resp.json() == response_data.update({"_id":str(response_data["_id"])}) 
-
+    response= response_data.update({"_id":str(response_data["_id"])})  
+    assert resp.json() == response
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
     resp=client.put('/v1/update-cron/642c2d7ea0209c97a399b860', json=update_json)
@@ -202,9 +203,8 @@ def test_get_response():
     Cron.get_response=AsyncMock(return_value=response_data) 
     resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b790', headers=auth_header)
     assert resp.status_code == 200
-    assert resp.json == response_data.update({"_id":str(response_data["_id"])}) 
-
-
+    response= response_data.update({"_id":str(response_data["_id"])})  
+    assert resp.json() == response
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
     resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b790')
