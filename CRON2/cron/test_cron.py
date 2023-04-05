@@ -34,7 +34,7 @@ def test_create_cron_valid_data():
      }    
     resp= client.post('/v1/add-cron', headers=auth_header, json=create_json)
     assert resp.status_code == 201
-    assert resp.json() == cron_data 
+    assert resp.json() == response_data 
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
