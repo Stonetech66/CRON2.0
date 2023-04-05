@@ -16,17 +16,17 @@ cron=Cron
 
 router=APIRouter(prefix='/v1')
 
-@router.post('/add-cron', status_code=201, response_model=CronSchemaDetails,response_model_exclude_unset=True,  response_model_by_alias=False)
+@router.post('/add-cron', status_code=201, response_model=CronSchemaDetails,response_model_exclude={"notify_on_error"})
 async def add_cron(schema:CronSchema, user=Depends(get_current_user)):
     result =await Cron.create_cron(schema, user)
     return result
 
-@router.get('/crons', response_model=List[CronSchemaDetails], response_model_exclude_unset=True)
+@router.get('/crons', response_model=List[CronSchemaDetails], response_model_exclude={"notify_on_error"})
 async def get_crons(limit:int=10, skip:int=0, user=Depends(get_current_user)):
     cron= await Cron.get_crons(skip=skip, limit=limit, user_id=str(user["_id"]))
     return cron
 
-@router.put('/update-cron/{cron_id}', response_model=CronSchemaDetails)
+@router.put('/update-cron/{cron_id}', response_model=CronSchemaDetails, response_model_exclude={"notify_on_error"})
 async def update_cron(schema:CronSchema, cron_id:str, user=Depends(get_current_user)):
     result= await Cron.update_cron(cron_id, schema, str(user["_id"]))
     return result
@@ -37,7 +37,7 @@ async def delete_cron(cron_id:str, user=Depends(get_current_user)):
     return x
 
 
-@router.get("/cron/{cron_id}", response_model=CronSchemaDetails)
+@router.get("/cron/{cron_id}", response_model=CronSchemaDetails, response_model_exclude={"notify_on_error"})
 async def get_cron(cron_id:str, user=Depends(get_current_user)):
     cron= await Cron.get_cron(cron_id, str(user["_id"]))
     return cron
