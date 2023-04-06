@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import asyncio
 import pytz, ssl
 import aiohttp
-from ..utils import next_execution, error_code
+from ..utils import next_execution
 from bson.objectid import ObjectId
 from json import JSONEncoder
 import json
@@ -83,7 +83,7 @@ async def update_cron(record, schedule):
 
     # finding the next execution of the cron and updating the table
     upper_execution= next_execution(timezone, year, month, weekday, day, hours, minute)
-    cron_table.update_one({"_id": record["_id"]}, {"$set": {"schedule.next_execution": upper_execution}, "$inc": {"error_count": 1}})
+    cron_table.update_one({"_id": record["_id"]}, {"$set": {"schedule.next_execution": upper_execution}})
 
       
 
