@@ -112,6 +112,6 @@ Create a .env file in the root directory and populate it with the necessary envi
 
 Build and start the Docker containers using the following command:
 ```
-docker-compose up --build
+docker compose up --build
 ```
 Access the API docs through `http://localhost/docs` .
