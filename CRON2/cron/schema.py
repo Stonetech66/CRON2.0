@@ -57,8 +57,8 @@ class  CronSchema(BaseModel):
     headers:dict =Field(default=None)
     body:Any=Field(default=None,)
     notify_on_error: bool= Field(default=True)
-    minutes:int=Field(default=0,le=59)
-    hours:int=Field(default=0, le=23)
+    minutes:str
+    hours:str
     days:int=Field(default=0)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
@@ -83,6 +83,25 @@ class  CronSchema(BaseModel):
                 "notify_on_error": False
             }
         }
+
+    @validator('minutes')
+    def validate_minutes(cls, value):
+        # Convert the input string to an integer
+        value_as_int = int(value)
+        # Validate that the integer is less than 60
+        if value_as_int >= 60:
+            raise ValueError('minutes must be less than 60')
+        return value_as_int
+  
+    @validator('hours')
+    def validate_hours(cls, value):
+        # Convert the input string to an integer
+        value_as_int = int(value)
+        # Validate that the integer is less than 24 hours
+        if value_as_int >= 24:
+            raise ValueError('hours must be less than 24')
+        return value_as_int
+ 
 
     @validator("month")
     def validate_month(cls, v, values, **kwargs):
@@ -114,6 +133,8 @@ class  CronSchema(BaseModel):
 class Response(ID):
     status:int
     timestamp:datetime
+    cron_id: str
+    url: str
 
 class CronSchemaDetails(CronBase, ID):
     schedule:dict
