@@ -32,14 +32,14 @@ def test_create_cron_valid_data():
      "headers": {"Authorization": "Bearer xxxxxxx"},
      "timezone":"Africa/Lagos", "weekday":"MON", "hours":9,"minutes":0,"notify_on_error": False
      }    
-    resp= client.post('/v1/add-cron', headers=auth_header, json=create_json)
+    resp= client.post('/v1/cron-jobs', headers=auth_header, json=create_json)
     assert resp.status_code == 201
     response_data["_id"] = str(response_data["_id"])
     assert resp.json() == response_data
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.post('/v1/add-cron', json=create_json)
+    resp=client.post('/v1/cron-jobs', json=create_json)
     assert resp.status_code == 401
    
     # Revert the dependency changes
@@ -51,13 +51,13 @@ def test_get_crons():
     # Authenticated Request 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_crons=AsyncMock(return_value=[]) 
-    resp=client.get('/v1/crons', headers=auth_header)
+    resp=client.get('/v1/cron-jobs', headers=auth_header)
     assert resp.status_code == 200
     assert resp.json() == []
 
     # Unauthenticated Request
     app.dependency_overrides[get_current_user] =  unauth_user
-    resp=client.get('/v1/crons')
+    resp=client.get('/v1/cron-jobs')
     assert resp.status_code == 401
 
     # Revert the dependency changes
@@ -76,20 +76,20 @@ def test_get_cron():
     "next_execution": "2023-04-10T09:00:00+01:00" }
     }
     Cron.get_cron= AsyncMock(return_value=response_data)
-    resp=client.get('/v1/cron/642c2d7ea0209c97a399b860', headers=auth_header)
+    resp=client.get('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
     assert resp.json() == response_data
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.get('/v1/cron/642c2d7ea0209c97a399b860')
+    resp=client.get('/v1/cron-jobs/642c2d7ea0209c97a399b860')
     assert resp.status_code == 401
     
     # Invalid Cron Id
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_cron= AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-    resp=client.get('/v1/cron/642c2d7ea0209c97a399b899')
+    resp=client.get('/v1/cron-jobs/642c2d7ea0209c97a399b899')
     assert resp.status_code == 404
 
     # Revert the dependency changes
@@ -111,20 +111,20 @@ def test_update_cron():
      "headers": {"Authorization": "Bearer xxxxxxx"},
      "timezone":"Africa/Lagos", "weekday":"TUE", "hours":9,"minutes":0,"notify_on_error": False
      }    
-    resp= client.put('/v1/update-cron/642c2d7ea0209c97a399b860', headers=auth_header, json=update_json)
+    resp= client.put('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header, json=update_json)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
     assert resp.json() == response_data
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.put('/v1/update-cron/642c2d7ea0209c97a399b860', json=update_json)
+    resp=client.put('/v1/cron-jobs/642c2d7ea0209c97a399b860', json=update_json)
     assert resp.status_code == 401
    
     # invalid Cron ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.update_cron = AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-    resp=client.put('/v1/update-cron/642c2d7ea0209c97a399b756', headers=auth_header, json=update_json)
+    resp=client.put('/v1/cron-jobs/642c2d7ea0209c97a399b756', headers=auth_header, json=update_json)
     assert resp.status_code == 404
     
     # Revert the dependency changes
@@ -135,18 +135,18 @@ def test_delete_cron():
     #Authenticated Request
     app.dependency_overrides[get_current_user] = auth_user
     Cron.delete_cron=AsyncMock(return_value=True) 
-    resp=client.delete('/v1/delete-cron/642c2d7ea0209c97a399b860', headers=auth_header)
+    resp=client.delete('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 204
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.delete('/v1/delete-cron/642c2d7ea0209c97a399b860')
+    resp=client.delete('/v1/cron-jobs/642c2d7ea0209c97a399b860')
     assert resp.status_code == 401
 
     # invalid Cron ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.delete_cron = AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-    resp=client.delete('/v1/delete-cron/642c2d7ea0209c97a399b560', headers=auth_header)
+    resp=client.delete('/v1/cron-jobs/642c2d7ea0209c97a399b560', headers=auth_header)
     assert resp.status_code == 404
 
     #  Revert the dependency changes
@@ -157,18 +157,18 @@ def test_get_cron_response_history():
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_response_history=AsyncMock(return_value=[])
     Cron.get_cron= AsyncMock(return_value={})
-    resp=client.get('/v1/cron-response/history/642c2d7ea0209c97a399b860', headers=auth_header)
+    resp=client.get('/v1/response/history/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 200
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.get('/v1/cron-response/history/642c2d7ea0209c97a399b860')
+    resp=client.get('/v1/response/history/642c2d7ea0209c97a399b860')
     assert resp.status_code == 401
 
     # invalid Cron ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_cron= AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID')) 
-    resp=client.get('/v1/cron-response/history/642c2d7ea0209c97a399b880', headers=auth_header)
+    resp=client.get('/v1/response/history/642c2d7ea0209c97a399b880', headers=auth_header)
     assert resp.status_code == 404
 
     #  Revert the dependency changes
@@ -180,18 +180,18 @@ def test_clear_cron_response_history():
     app.dependency_overrides[get_current_user] = auth_user
     Cron.clear_response_history=AsyncMock(return_value=True) 
     Cron.get_cron= AsyncMock(return_value=[])
-    resp=client.delete('/v1/clear-cron-response-history/642c2d7ea0209c97a399b860', headers=auth_header)
+    resp=client.delete('/v1/response/history/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 204
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.delete('/v1/clear-cron-response-history/642c2d7ea0209c97a399b860')
+    resp=client.delete('/v1/response/history/642c2d7ea0209c97a399b860')
     assert resp.status_code == 401
 
     # invalid Cron ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_cron = AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-    resp=client.delete('/v1/clear-cron-response-history/642c2d7ea0209c97a399b880', headers=auth_header)
+    resp=client.delete('/v1/response/history/642c2d7ea0209c97a399b880', headers=auth_header)
     assert resp.status_code == 404
 
  
@@ -203,7 +203,7 @@ def test_get_response():
     "_id" :ObjectId("642c2d7ea0578c97a566b790"), 
     "status":200 , "timestamp":datetime.utcnow()} 
     Cron.get_response=AsyncMock(return_value=response_data) 
-    resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b790', headers=auth_header)
+    resp=client.get('/v1/response/642c2d7ea0578c97a566b790', headers=auth_header)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
     response_data["timestamp"] = response_data["timestamp"].strftime('%Y-%m-%dT%H:%M:%S.%f')
@@ -211,13 +211,13 @@ def test_get_response():
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b790')
+    resp=client.get('/v1/response/642c2d7ea0578c97a566b790')
     assert resp.status_code == 401
 
     # invalid Response ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.get_response = AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Response ID'))
-    resp=client.get('/v1/cron-response/642c2d7ea0578c97a566b789', headers=auth_header)
+    resp=client.get('/v1/response/642c2d7ea0578c97a566b789', headers=auth_header)
     assert resp.status_code == 404
 
  
@@ -226,18 +226,18 @@ def test_delete_response():
     #Authenticated Request
     app.dependency_overrides[get_current_user] = auth_user
     Cron.delete_response=AsyncMock(return_value=True) 
-    resp=client.delete('/v1/delete-response/642c2d7ea0578c97a566b790', headers=auth_header)
+    resp=client.delete('/v1/response/642c2d7ea0578c97a566b790', headers=auth_header)
     assert resp.status_code == 204
 
     # Unauthenticated Request 
     app.dependency_overrides[get_current_user] = unauth_user
-    resp=client.delete('/v1/delete-response/642c2d7ea0578c97a566b790')
+    resp=client.delete('/v1/response/642c2d7ea0578c97a566b790')
     assert resp.status_code == 401
 
     # invalid Response ID 
     app.dependency_overrides[get_current_user] = auth_user
     Cron.delete_response = AsyncMock(side_effect=HTTPException(status_code=404, detail='invalid Cron ID'))
-    resp=client.delete('/v1/delete-response/642c2d7ea0578c67b566b790', headers=auth_header)
+    resp=client.delete('/v1/response/642c2d7ea0578c67b566b790', headers=auth_header)
     assert resp.status_code == 404
 
   
