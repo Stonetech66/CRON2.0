@@ -42,7 +42,7 @@ async def get_cron(cron_id:str, user=Depends(get_current_user)):
     cron= await Cron.get_cron(cron_id, str(user["_id"]))
     return cron
 
-@router.get("/response/history/{cron_id}", response_model=list[Response],response_model_exclude={'cron_id','url' })
+@router.get("/response/history/{cron_id}", response_model=list[Response],response_model_exclude={"cron_id", "url"} )
 async def cron_response_history(cron_id:str, skip:int=0, limit:int=10,user=Depends(get_current_user)):
     cron=await Cron.get_cron(cron_id, str(user["_id"]))
     response=await  Cron.get_response_history(cron_id, skip, limit)
