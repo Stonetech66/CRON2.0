@@ -61,7 +61,7 @@ async def send_request(session, data, producer):
 
 
 async def error_mail_producer(cron_id, status_code, email,url,notify_on_error, producer):
-    if error_code(status_code):
+    if status_code > 400:
         try:
             await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$inc": {"error_count": 1}})
             if notify_on_error:
