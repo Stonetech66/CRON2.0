@@ -39,7 +39,7 @@ async def send_request(session, data, producer):
     method=data['method']
     header=data['header']
     url= data['url']
-    cron_id= ObjectId(data['cron_id'])
+    cron_id= data['cron_id']
     body= data['body']
     email=data["email"]
     # sending http requests to the specified endpoint
@@ -68,6 +68,8 @@ async def error_mail_producer(cron_id, status_code, email,url,notify_on_error, p
                 await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
         except Exception as e:
             logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
+    else:
+      pass
 
 async def update_cron(record, schedule):
     year= schedule["years"]
