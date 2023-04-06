@@ -23,21 +23,22 @@ CRON2.0 is built using the following technologies:
 
 Creates a new cron job. Requires authentication.
 
-Example: This schedules a cron job to be ran every Sunday by 9:45 am timezone: Africa/Lagos
+Example: This schedules a cron job to be run every Sunday by 9:45 am timezone: Africa/Lagos
 ```
 Headers:
 Authorization: Bearer <token>
 
 Body:
 {
-     "url": "https://example.com", // url/endpoint to the cron job you want to be run 
-     "method": "get", //the HTTP method of your url/endpoint
-     "timezone":"Africa/Lagos", 
-     "weekday":"SUN", 
-     "hours":"9",
-     "minutes":"45",
-     "notify_on_error": true
-}
+     "url": "https://example.com", // URL/endpoint to the cron job you want to be run 
+     "method": "get", // HTTP method of your URL/endpoint
+     "timezone":"Africa/Lagos",  // Timezone in which you want the job to run
+     "weekday":"SUN", // Day of the week on which the job should run
+     "hours":"9", // Hour of the day when the job should run
+     "minutes":"45", // Minute of the hour when the job should run
+     "notify_on_error": true // Whether to send error notifications if the job encounters an error
+} 
+
 ```
 
 - `GET /v1/cron-jobs`
