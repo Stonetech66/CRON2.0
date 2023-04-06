@@ -98,9 +98,8 @@ class Cron:
     async def get_response_history(cls, cron_id, skip, limit):
         try:
             response_list=[]
-            async for resp in response_table.find({"cron_id":ObjectId(cron_id)}).skip(skip).limit(limit):
+            async for resp in response_table.find({"cron_id":cron_id}).skip(skip).limit(limit):
                 response_list.append(resp)
-                print(resp) 
             return response_list
         except:
             raise cls.cron_error
