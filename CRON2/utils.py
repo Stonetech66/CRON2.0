@@ -5,12 +5,16 @@ import pytz
 def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:int, minutes:int):
 
     if not month == 0:
+        if hours == '00':
+           hours= 0
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes, second=0, microsecond=0)
 
 
     elif weekday:
         weekdays = {'MON': MO, 'TUE': TU, 'WED': WE, 'THU': TH, 'FRI': FR, 'SAT': SA, 'SUN': SU}
         dt_now = datetime.now(pytz.timezone(timezone))
+        if hours == '00':
+           hours= 0
         next_dt = dt_now + relativedelta(weekday=weekdays[weekday], hour=hours, minute=minutes, second=0, microsecond=0)
         if str(dt_now.strftime('%a')[:2]).upper() == weekday and next_dt <= dt_now:
             date=dt_now + relativedelta(weekday=weekdays[weekday](+1), days=+1, hour=hours, minute=minutes, second=0, microsecond=0)
@@ -22,6 +26,8 @@ def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, ho
        
         return date
     elif not day == 0:
+        if hours == '00':
+           hours= 0
         d=datetime.now(tz=pytz.timezone(timezone))
         if d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0) < d:
             return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
@@ -45,16 +51,22 @@ def error_code(status_code):
 def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:int, minutes:int):
 
     if not month == 0:
+        if hours == '00':
+           hours= 0
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(month=month, months=1, hour=hours, minute=minutes)
 
 
     elif weekday:
         weekdays = {'MON': MO, 'TUE': TU, 'WED': WE, 'THU': TH, 'FRI': FR, 'SAT': SA, 'SUN': SU}
+        if hours == '00':
+           hours= 0
         dt_now = datetime.now(pytz.timezone(timezone))
         next_dt = dt_now + relativedelta(weekday=weekdays[weekday](+1), days=+1, hour=hours, minute=minutes, second=0, microsecond=0)
          
         return next_dt
     elif not day == 0:
+        if hours == '00':
+           hours= 0
         d=datetime.now(tz=pytz.timezone(timezone))
         if d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0) < d:
             return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
