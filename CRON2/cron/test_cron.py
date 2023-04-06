@@ -201,7 +201,7 @@ def test_get_response():
     app.dependency_overrides[get_current_user] = auth_user   
     response_data={
     "_id" :ObjectId("642c2d7ea0578c97a566b790"), 
-    "status":200 , "timestamp":datetime.utcnow()} 
+    "status":200 , "timestamp":datetime.utcnow(), "cron_id":"642c2d7ea0209c97a399b860", "url" :"http://example.com"} 
     Cron.get_response=AsyncMock(return_value=response_data) 
     resp=client.get('/v1/response/642c2d7ea0578c97a566b790', headers=auth_header)
     assert resp.status_code == 200
