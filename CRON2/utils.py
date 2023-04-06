@@ -27,7 +27,9 @@ def find_next_execution(timezone:str, year:int , month:int, weekday, day:int, ho
             return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
         return d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0)
     
-    elif not hours == 0:
+    elif hours != 0:
+        if hours == '00':
+           hours= 0
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(hours=hours, minute=minutes, second=0, microsecond=0)
     
     elif minutes:
@@ -58,7 +60,9 @@ def next_execution(timezone:str, year:int , month:int, weekday, day:int, hours:i
             return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(days=day, hour=hours, minute=minutes, second=0, microsecond=0)
         return d + relativedelta(hour=hours, minute=minutes, second=0, microsecond=0)
     
-    elif not hours == 0:
+    elif hours != 0:
+        if hours == '00':
+           hours= 0
         return datetime.now(tz=pytz.timezone(timezone))+ relativedelta(hours=hours, minutes=minutes, second=0, microsecond=0)
     
     elif minutes:
