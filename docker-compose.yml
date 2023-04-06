@@ -11,7 +11,10 @@ services:
       - ./:/app
     env_file:
       - ./.env
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
   worker:
+    restart: unless-stopped
     depends_on:
       - consumer1
       - consumer2
@@ -19,13 +22,31 @@ services:
     command: sh -c "sh worker.sh"
     env_file:
       - ./.env
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
   consumer1:
+    restart: unless-stopped
     build: .
     command: sh -c "sh consumer.sh"
     env_file:
       - ./.env
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
   consumer2:
+    restart: unless-stopped
     build: .
     command: sh -c "sh  consumer.sh"
     env_file:
       - ./.env
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
