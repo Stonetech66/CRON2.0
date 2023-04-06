@@ -97,8 +97,10 @@ class  CronSchema(BaseModel):
     def validate_hours(cls, value):
         # Convert the input string to an integer
         value_as_int = int(value)
+        if value == '00':
+            return '00'
         # Validate that the integer is less than 24 hours
-        if value_as_int >= 24:
+        elif value_as_int >= 24:
             raise ValueError('hours must be less than 24')
         return value_as_int
  
