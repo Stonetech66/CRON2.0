@@ -57,8 +57,8 @@ class  CronSchema(BaseModel):
     headers:dict =Field(default=None)
     body:Any=Field(default=None,)
     notify_on_error: bool= Field(default=True)
-    minutes:str
-    hours:str
+    minutes:str=Field(default=0)
+    hours:str=Field(default=0) 
     days:int=Field(default=0)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
