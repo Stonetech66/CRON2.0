@@ -35,7 +35,7 @@ class Cron:
            cron_data['schedule']=schedule_data
            cron= await cron_table.insert_one({**cron_data , 'user':{'_id':user['_id'], 'email':user['email']} , "error_count":0})
         
-        except:
+        except Exception as e:
             raise HTTPException(detail=f"{e}", status_code=400)
         return {"_id":cron.inserted_id,**cron_data}
 
