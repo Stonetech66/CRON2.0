@@ -1,7 +1,9 @@
 <h1 align="center">CRON2.0</h1>
-CRON2.0 is a scheduler application that automates the scheduling of cron jobs and also provides error notifications via email. With CRON2.0, users can schedule their cron jobs easily and conveniently. Users can specify the frequency of the cron job, such as every minute, hour, or day, as well as the specific time and day of the week. The application also includes an authentication system to ensure that only authorized users can access the scheduler.
+CRON2.0 is an advanced scheduler application that simplifies the process of scheduling cron jobs and provides a reliable error notification system. With CRON2.0, users can easily schedule their cron jobs based on specific dates and times, or set up recurring schedules such as every minute, hour, or day.
 
-One of the key benefits of this application is that it removes the stress of developers having to set up cron jobs manually, which can be time-consuming and error-prone. With this scheduler, developers can automate the process of scheduling cron jobs, freeing up their time to focus on other critical tasks.
+One of the standout features of CRON2.0 is its seamless integration with the Kafka messaging system. This allows the application to be distributed, making it possible for multiple consumers to subscribe to the same data stream. This feature enables the application to scale quickly and effortlessly by adding more consumers, making it a fantastic choice for enterprise environments that require high availability and fault-tolerance.
+
+In addition to its integration with Kafka, CRON2.0 has a robust error notification system that alerts users via email in case of any issues during job execution. This feature ensures that users are informed of any errors promptly, enabling them to take the appropriate corrective action quickly.
 
 ## Features
 - Easy setup: With CRON2.0, you no longer have to set up cron jobs manually, saving you time and reducing the risk of errors.
@@ -23,7 +25,7 @@ CRON2.0 is built using the following technologies:
 
 Creates a new cron job. Requires authentication.
 
-Example: This schedules a cron job to be run every Sunday by 9:45 am timezone: Africa/Lagos
+Example: This schedules a cron job to be run every Sunday by 9:45 am timezone: US/Eastern
 ```
 Headers:
 Authorization: Bearer <token>
@@ -32,7 +34,7 @@ Body:
 {
      "url": "https://example.com", // URL/endpoint to the cron job you want to be run 
      "method": "get", // HTTP method of your URL/endpoint
-     "timezone":"Africa/Lagos",  // Timezone in which you want the job to run
+     "timezone":"US/Eastern",  // Timezone in which you want the job to run
      "weekday":"SUN", // Day of the week on which the job should run
      "hours":"9", // Hour of the day when the job should run
      "minutes":"45", // Minute of the hour when the job should run
@@ -75,7 +77,7 @@ Deletes a specific response by ID. Requires authentication.
  
 
 
-- GET /v1/user
+- `GET /v1/user`
 
 Returns information about the authenticated user. Requires Authentication. 
 
