@@ -18,7 +18,7 @@ class Cron:
            cron_data={}
            schedule_data={}
            next_execution= find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
-           if not next_execution:
+           if next_execution == None:
                 raise HTTPException(detail="Invalid schedule date or time", status_code=400)
            cron_data['url']=schema.url
            cron_data['method']=schema.method
@@ -56,7 +56,7 @@ class Cron:
             cron_data={}
             schedule_data={}
             next_execution=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
-            if not next_execution:
+            if next_execution  == None:
                 raise HTTPException(detail="Invalid schedule date or time", status_code=400 )
             cron_data['url']=schema.url
             cron_data['method']=schema.method
@@ -76,7 +76,7 @@ class Cron:
             cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
             cron_data.pop('error_count') 
             if cron.matched_count==1:
-                return {"_id":ObjectId(id),**cron_data}
+                return {"_id":ObjectId(id),"message": "cron Job updated sucessfuly", "next_execution": next_execution}
             raise cls.cron_error
         except Exception as e:
             raise cls.cron_error

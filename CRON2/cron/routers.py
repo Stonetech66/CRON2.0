@@ -26,7 +26,7 @@ async def get_crons(limit:int=10, skip:int=0, user=Depends(get_current_user)):
     cron= await Cron.get_crons(skip=skip, limit=limit, user_id=str(user["_id"]))
     return cron
 
-@router.put('/cron-jobs/{cron_id}', response_model=CronSchemaDetails, response_model_exclude={"notify_on_error"})
+@router.put('/cron-jobs/{cron_id}', response_model=CronResponseSchema, response_model_exclude={"notify_on_error"})
 async def update_cron(schema:CronSchema, cron_id:str, user=Depends(get_current_user)):
     result= await Cron.update_cron(cron_id, schema, str(user["_id"]))
     return result
