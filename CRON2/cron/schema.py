@@ -106,15 +106,12 @@ class  CronSchema(BaseModel):
 
     @validator("month")
     def validate_month(cls, v, values, **kwargs):
-        if  v>0 and not values.get("hours") :
+        if  v>0 and values.get("hours") == None :
             raise ValueError(f"you chose {v} of every month, you are to also provide a time e.g hours=18, minutes=0 i.e every {v} of the month  by 6:00 pm ")
         return v
     
     @validator("weekday")
     def validate_weekday(cls, v, values, **kwargs):
-        print(values) 
-        print(values.get("hours"))
-        print(v) 
         if v and values.get("hours") == None:
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=30 i.e every {v}  by 6:30 pm ")
         
@@ -124,7 +121,7 @@ class  CronSchema(BaseModel):
     def validate_days(cls, v, values, **kwargs):
         if v <= 0:
             raise ValueError("Number of days must be greater than 0 or equal to None")
-        elif v>0 and not values.get("hours") :
+        elif v>0 and values.get("hours") == None :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=0 i.e every {v} days  by 6:00 pm ")
         return v
     
