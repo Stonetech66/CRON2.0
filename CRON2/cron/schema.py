@@ -59,7 +59,7 @@ class  CronSchema(BaseModel):
     notify_on_error: bool= Field(default=True)
     minutes:str=Field(default=0)
     hours:str=Field(default=None) 
-    days:conint=Field(default=None, lte=7)
+    days:conint=Field(default=None)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
     years:int=Field(default=0)
