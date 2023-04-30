@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, Field, HttpUrl
+from pydantic import BaseModel, conint, validator, Field, HttpUrl
 from enum import Enum
 from bson.objectid import ObjectId
 from typing import Any
@@ -59,7 +59,7 @@ class  CronSchema(BaseModel):
     notify_on_error: bool= Field(default=True)
     minutes:str=Field(default=0)
     hours:str=Field(default=0) 
-    days:int=Field(default=0)
+    days:conint=Field(default=0, gt=0, lte=7)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
     years:int=Field(default=0)
@@ -96,30 +96,30 @@ class  CronSchema(BaseModel):
     @validator('hours')
     def validate_hours(cls, value):
         # Convert the input string to an integer
-        value_as_int = int(value)
         if value == '00':
             return '00'
+        value_as_int = int(value)
         # Validate that the integer is less than 24 hours
-        elif value_as_int >= 24:
+        if value_as_int >= 24:
             raise ValueError('hours must be less than 24')
         return value_as_int
  
 
     @validator("month")
     def validate_month(cls, v, values, **kwargs):
-        if not v==0 and not values["hours"]:
+        if  v>0 and not values.get("hours") :
             raise ValueError(f"you chose {v} of every month, you are to also provide a time e.g hours=18, minutes=0 i.e every {v} of the month  by 6:00 pm ")
         return v
     
     @validator("weekday")
     def validate_weekday(cls, v, values, **kwargs):
-        if v and not values["hours"] :
+        if v and not values.get("hours") :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=30 i.e every {v}  by 6:30 pm ")
         return v
     
     @validator("days")
     def validate_days(cls, v, values, **kwargs):
-        if not v==0 and not values["hours"] :
+        if v>0 and not values.get("hours") :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=0 i.e every {v} days  by 6:00 pm ")
         return v
     
