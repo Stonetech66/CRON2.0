@@ -59,7 +59,7 @@ class  CronSchema(BaseModel):
     notify_on_error: bool= Field(default=True)
     minutes:str=Field(default=0)
     hours:str=Field(default=None) 
-    days:conint=Field(default=None, gt=0, lte=7)
+    days:conint=Field(default=None, lte=7)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
     years:int=Field(default=0)
@@ -117,7 +117,9 @@ class  CronSchema(BaseModel):
     
     @validator("days")
     def validate_days(cls, v, values, **kwargs):
-        if v>0 and not values.get("hours") :
+        if v <= 0:
+            raise ValueError("Number of days must be greater than 0 or equal to None")
+        elif v>0 and not values.get("hours") :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=0 i.e every {v} days  by 6:00 pm ")
         return v
     
