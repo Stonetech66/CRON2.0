@@ -25,7 +25,8 @@ CRON2.0 is built using the following technologies:
 
 Creates a new cron job. Requires authentication.
 
-Example: This schedules a cron job to be run every Sunday by 9:45 am timezone: US/Eastern
+Examples: 
+1) This schedules a cron job to be run every Sunday by 9:45 am timezone: US/Eastern
 ```
 Headers:
 Authorization: Bearer <token>
@@ -38,6 +39,40 @@ Body:
      "weekday":"SUN", // Day of the week on which the job should run
      "hours":"9", // Hour of the day when the job should run
      "minutes":"45", // Minute of the hour when the job should run
+     "notify_on_error": true // Whether to send error notifications if the job encounters an error
+} 
+
+```
+2) This schedules a cron job to be run every day by 12:00 am timezone: Africa/Lagos
+```
+Headers:
+Authorization: Bearer <token>
+
+Body:
+{
+     "url": "https://example.com", // URL/endpoint to the cron job you want to be run 
+     "method": "get", // HTTP method of your URL/endpoint
+     "timezone":"Africa/Lagos",  // Timezone in which you want the job to run
+     "days":1, // Number of days when the cron job should run
+     "hours":"00", // Hour of the day when the job should run
+     "minutes":"00", // Minute of the hour when the job should run
+     "notify_on_error": true // Whether to send error notifications if the job encounters an error
+} 
+
+```
+
+3) This schedules a cron job to be run every 2 hour 30 minutes timezone: Africa/Lagos
+```
+Headers:
+Authorization: Bearer <token>
+
+Body:
+{
+     "url": "https://example.com", // URL/endpoint to the cron job you want to be run 
+     "method": "get", // HTTP method of your URL/endpoint
+     "timezone":"Africa/Lagos",  // Timezone in which you want the job to run
+     "hours":"2", // Hour of the day when the job should run
+     "minutes":"30", // Minute of the hour when the job should run
      "notify_on_error": true // Whether to send error notifications if the job encounters an error
 } 
 
