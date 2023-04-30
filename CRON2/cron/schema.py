@@ -140,11 +140,14 @@ class Response(ID):
 
 class CronSchemaDetails(CronBase, ID):
     schedule:dict
+    timestamp: datetime 
     class Config:
         arbitrary_types_allowed=True
         allow_population_by_field_name=True
 
-
+class CronResponseSchema(ID):
+    message: str
+    next_execution:  datetime
 
 
 

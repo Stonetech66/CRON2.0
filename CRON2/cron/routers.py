@@ -4,7 +4,7 @@ from ..utils import next_execution
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from .schema import CronSchema, CronSchemaDetails, Response
+from .schema import CronSchema, CronSchemaDetails, Response, CronResponseSchema 
 from ..database import cron_table, db, response_table
 from .crud import Cron
 from ..dependencies import get_current_user
@@ -16,7 +16,7 @@ cron=Cron
 
 router=APIRouter(prefix='/v1', tags=["cron-jobs"] )
 
-@router.post('/cron-jobs', status_code=201, response_model=CronSchemaDetails,response_model_exclude={"notify_on_error"})
+@router.post('/cron-jobs', status_code=201, response_model=CronResponseSchema,response_model_exclude={"notify_on_error"})
 async def add_cron(schema:CronSchema, user=Depends(get_current_user)):
     result =await Cron.create_cron(schema, user)
     return result
@@ -66,7 +66,7 @@ async def get_response(response_id:str, user=Depends(get_current_user) ):
 async def delete_response(response_id:str, user=Depends(get_current_user)):
     response= await Cron.delete_response(response_id)
     return "success"
-
+"""
 @router.get("/timeout")
 async def timeout(time:int):
    await asyncio.sleep(time)
@@ -81,3 +81,4 @@ async def timeout():
 async def test(access:str, url:str, min:int, hour:int, no:int):
    await start_test("http//:example.com",access,"https://cron20-production.up.railway.app", url, no, min, hour) 
    return "success" 
+"""

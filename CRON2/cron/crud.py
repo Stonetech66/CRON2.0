@@ -22,7 +22,7 @@ class Cron:
            cron_data['headers']=schema.headers
            cron_data['body']=schema.body
            schedule_data['notify_on_error']= schema.notify_on_error
-           cron_data["date_added"]= datetime.now()
+           cron_data["timestamp"]= datetime.now()
            schedule_data['years']=schema.years
            schedule_data['month']=schema.month
            schedule_data['weekday']=schema.weekday
@@ -30,19 +30,18 @@ class Cron:
            schedule_data['hours']=schema.hours
            schedule_data['minutes']=schema.minutes
            schedule_data['timezone']=schema.timezone
-           schedule_data['date_created']= datetime.now()
            schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
            cron_data['schedule']=schedule_data
            cron= await cron_table.insert_one({**cron_data , 'user':{'_id':user['_id'], 'email':user['email']} , "error_count":0})
         
         except Exception as e:
             raise HTTPException(detail=f"{e}", status_code=400)
-        return {"_id":cron.inserted_id,**cron_data}
+        return {"_id":cron.inserted_id, "message":"cron Job created successfully", "next_execution":schedule_data["next_execution"]}
 
     async def get_crons(user_id:str,skip:int=0, limit:int=5, )-> list:
         cron_list=[]
         try:
-            async for cron in cron_table.find({"user._id":ObjectId(user_id)}).limit(limit).skip(skip):
+            async for cron in cron_table.find({"user._id":ObjectId(user_id)}).limit(limit).skip(skip).sort("timestamp" , -1 ):
                 cron_list.append(cron)
         except:
             pass
@@ -98,7 +97,7 @@ class Cron:
     async def get_response_history(cls, cron_id, skip, limit):
         try:
             response_list=[]
-            async for resp in response_table.find({"cron_id":cron_id}).skip(skip).limit(limit):
+            async for resp in response_table.find({"cron_id":cron_id}).skip(skip).limit(limit).sort("timestamp" , -1):
                 response_list.append(resp)
             return response_list
         except:
