@@ -69,12 +69,12 @@ def test_get_cron():
     "body": None, "schedule": {"notify_on_error": False,
     "years": 0,"month": 0, "weekday": "MO", "days": 0, "hours": 9, "minutes": 0,
     "timezone": "Africa/Lagos","date_created": "2023-04-04T14:00:30.681282",
-    "next_execution": "2023-04-10T09:00:00+01:00" }
-    }
+    "next_execution": "2023-04-10T09:00:00+01:00" }, "timestamp":datetime.utcnow()}
     Cron.get_cron= AsyncMock(return_value=response_data)
     resp=client.get('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
+    response_data["timestamp"] = response_data["timestamp"].strftime('%Y-%m-%dT%H:%M:%S.%f')
     assert resp.json() == response_data
 
     # Unauthenticated Request 
@@ -99,8 +99,7 @@ def test_update_cron():
     "_id": ObjectId("642c2d7ea0209c97a399b860"), "url":"https://example2.com","method": "get",
     "headers": { "Authorization": "Bearer xxxxxxx" }, "body": None,"schedule": {
     "notify_on_error": False,"years": 0,"month": 0,
-    "weekday": "TUE","days": 0,"hours": 9,"minutes": 0,"timezone":"Africa/Lagos","date_created":"2023-04-04T14:00:30.681282","next_execution": "2023-04-10T09:00:00+01:00" }
-    }
+    "weekday": "TUE","days": 0,"hours": 9,"minutes": 0,"timezone":"Africa/Lagos","date_created":"2023-04-04T14:00:30.681282","next_execution": "2023-04-10T09:00:00+01:00" },"timestamp":datetime.utcnow()}
     Cron.update_cron= AsyncMock(return_value=response_data)
     update_json={
      "url": "https://example2.com", "method": "get",
@@ -110,6 +109,7 @@ def test_update_cron():
     resp= client.put('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header, json=update_json)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
+    response_data["timestamp"] = response_data["timestamp"].strftime('%Y-%m-%dT%H:%M:%S.%f')
     assert resp.json() == response_data
 
     # Unauthenticated Request 

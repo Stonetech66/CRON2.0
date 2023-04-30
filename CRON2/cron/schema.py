@@ -113,6 +113,8 @@ class  CronSchema(BaseModel):
     def validate_weekday(cls, v, values, **kwargs):
         if v and not values.get("hours") :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=30 i.e every {v}  by 6:30 pm ")
+        print(values.get("hours"))
+        print(values)
         return v
     
     @validator("days")
