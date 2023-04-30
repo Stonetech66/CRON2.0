@@ -22,7 +22,6 @@ def test_create_cron_valid_data():
     app.dependency_overrides[get_current_user] = auth_user
     response_data={
     "_id": ObjectId("642c2d7ea0209c97a399b860"), "message":"cron Job created successfully","next_execution": "2023-04-10T09:00:00+01:00" }
-    }
     Cron.create_cron= AsyncMock(return_value=response_data)
     create_json={
      "url": "https://example.com", "method": "get",

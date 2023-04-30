@@ -58,8 +58,8 @@ class  CronSchema(BaseModel):
     body:Any=Field(default=None,)
     notify_on_error: bool= Field(default=True)
     minutes:str=Field(default=0)
-    hours:str=Field(default=0) 
-    days:conint=Field(default=0, gt=0, lte=7)
+    hours:str=Field(default=None) 
+    days:conint=Field(default=None, gt=0, lte=7)
     weekday:Weekdays=Field(default=None)
     month:int=Field(default=0,  le=31)
     years:int=Field(default=0)
@@ -96,8 +96,6 @@ class  CronSchema(BaseModel):
     @validator('hours')
     def validate_hours(cls, value):
         # Convert the input string to an integer
-        if value == '00':
-            return '00'
         value_as_int = int(value)
         # Validate that the integer is less than 24 hours
         if value_as_int >= 24:
