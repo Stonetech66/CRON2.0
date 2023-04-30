@@ -17,6 +17,9 @@ class Cron:
         try:
            cron_data={}
            schedule_data={}
+           next_execution= find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+           if not next_execution:
+                raise HTTPException(detail="Invalid schedule date or time", status_code=400)
            cron_data['url']=schema.url
            cron_data['method']=schema.method
            cron_data['headers']=schema.headers
@@ -30,7 +33,7 @@ class Cron:
            schedule_data['hours']=schema.hours
            schedule_data['minutes']=schema.minutes
            schedule_data['timezone']=schema.timezone
-           schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+           schedule_data['next_execution']=next_execution
            cron_data['schedule']=schedule_data
            cron= await cron_table.insert_one({**cron_data , 'user':{'_id':user['_id'], 'email':user['email']} , "error_count":0})
         
@@ -52,6 +55,9 @@ class Cron:
 
             cron_data={}
             schedule_data={}
+            next_execution=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+            if not next_execution:
+                raise HTTPException(detail="Invalid schedule date or time", status_code=400 )
             cron_data['url']=schema.url
             cron_data['method']=schema.method
             cron_data['headers']=schema.headers
@@ -64,7 +70,7 @@ class Cron:
             schedule_data['hours']=schema.hours
             schedule_data['minutes']=schema.minutes 
             schedule_data['timezone']=schema.timezone
-            schedule_data['next_execution']=find_next_execution(schema.timezone, schema.years, schema.month, schema.weekday, schema.days, schema.hours, schema.minutes)
+            schedule_data['next_execution']=next_execution
             cron_data['schedule']=schedule_data
             cron_data['error_count'] = 0
             cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
