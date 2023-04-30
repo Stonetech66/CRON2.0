@@ -100,6 +100,7 @@ class  CronSchema(BaseModel):
         # Validate that the integer is less than 24 hours
         if value_as_int >= 24:
             raise ValueError('hours must be less than 24')
+        print(value_as_int) 
         return value_as_int
  
 
@@ -111,10 +112,11 @@ class  CronSchema(BaseModel):
     
     @validator("weekday")
     def validate_weekday(cls, v, values, **kwargs):
+        print(values) 
+        print(values.get("hours"))
         if v and not values.get("hours") :
             raise ValueError(f"you are to also provide a time e.g hours=18, minutes=30 i.e every {v}  by 6:30 pm ")
-        print(values.get("hours"))
-        print(values)
+        
         return v
     
     @validator("days")
