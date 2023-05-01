@@ -96,10 +96,7 @@ def test_update_cron():
     # Authenticated Request 
     app.dependency_overrides[get_current_user] = auth_user
     response_data={
-    "_id": ObjectId("642c2d7ea0209c97a399b860"), "url":"https://example2.com","method": "get",
-    "headers": { "Authorization": "Bearer xxxxxxx" }, "body": None,"schedule": {
-    "notify_on_error": False,"years": 0,"month": 0,
-    "weekday": "TUE","days": 0,"hours": 9,"minutes": 0,"timezone":"Africa/Lagos","date_created":"2023-04-04T14:00:30.681282","next_execution": "2023-04-10T09:00:00+01:00" },"timestamp":datetime.utcnow()}
+    "_id": ObjectId("642c2d7ea0209c97a399b860"), "message":"cron Job updated successfully","next_execution": "2023-04-10T09:00:00+01:00" }   
     Cron.update_cron= AsyncMock(return_value=response_data)
     update_json={
      "url": "https://example2.com", "method": "get",

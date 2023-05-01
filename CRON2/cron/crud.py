@@ -76,7 +76,7 @@ class Cron:
             cron= await cron_table.update_one({"_id": ObjectId(id), "user._id":ObjectId(user_id)},{"$set":cron_data})
             cron_data.pop('error_count') 
             if cron.matched_count==1:
-                return {"_id":ObjectId(id),"message": "cron Job updated sucessfuly", "next_execution": next_execution}
+                return {"_id":ObjectId(id),"message": "cron Job updated sucessfully", "next_execution": next_execution}
             raise cls.cron_error
         except Exception as e:
             raise cls.cron_error
