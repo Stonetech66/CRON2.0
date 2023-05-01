@@ -106,7 +106,6 @@ def test_update_cron():
     resp= client.put('/v1/cron-jobs/642c2d7ea0209c97a399b860', headers=auth_header, json=update_json)
     assert resp.status_code == 200
     response_data["_id"] = str(response_data["_id"])
-    response_data["timestamp"] = response_data["timestamp"].strftime('%Y-%m-%dT%H:%M:%S.%f')
     assert resp.json() == response_data
 
     # Unauthenticated Request 
