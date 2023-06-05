@@ -1,4 +1,4 @@
-from ..database import cron_table
+from ..database import job_table
 from datetime import datetime, timedelta 
 import asyncio
 import pytz, ssl
@@ -39,7 +39,7 @@ async def send_request(session, data, producer):
     method=data['method']
     header=data['header']
     url= data['url']
-    cron_id= data['cron_id']
+    job_id= data['job_id']
     body= data['body']
     email=data["email"]
     # sending http requests to the specified endpoint
@@ -54,20 +54,20 @@ async def send_request(session, data, producer):
         logger.exception(f"{e}")
         status_code = 500
     try:
-       await error_mail_producer(cron_id, status_code,email, url, data['notify_on_error'], producer)
+       await error_mail_producer(job_id, status_code,email, url, data['notify_on_error'], producer)
     except Exception as e:
        logger.exception(e) 
-    return {"status":status_code, "url":url, "cron_id":cron_id, "timestamp":datetime.utcnow()}
+    return {"status":status_code, "url":url, "job_id":job_id, "timestamp":datetime.utcnow()}
 
 
-async def error_mail_producer(cron_id, status_code, email,url,notify_on_error, producer):
+async def error_mail_producer(job_id, status_code, email,url,notify_on_error, producer):
     if status_code > 400:
         try: 
-            await cron_table.update_one({"_id": ObjectId(cron_id)}, {"$inc": {"error_count": 1}})
+            await job_table.update_one({"_id": ObjectId(job_id)}, {"$inc": {"error_count": 1}})
             if notify_on_error:
                 await producer.send("error-mail",{"code":status_code, "email":email, "cron":url })
         except Exception as e:
-            logger.exception(f"An exception occurred while updating cron table for cron {cron_id}: {str(e)}")
+            logger.exception(f"An exception occurred while updating cron table for cron {job_id}: {str(e)}")
     else:
       pass
 
@@ -82,7 +82,7 @@ async def update_cron(record, schedule):
 
     # finding the next execution of the cron and updating the table
     upper_execution= next_execution(timezone, year, month, weekday, day, hours, minute)
-    cron_table.update_one({"_id": record["_id"]}, {"$set": {"schedule.next_execution": upper_execution}})
+    job_table.update_one({"_id": record["_id"]}, {"$set": {"schedule.next_execution": upper_execution}})
 
       
 
@@ -92,20 +92,20 @@ async def cron_job(producer):
         tasks=[]
         update_crons=[] 
         # filtering through the database to find crons whose schedule time are less than or equal to the current UTC time
-        async for cron in cron_table.find({"schedule.next_execution":{"$lte": datetime.now(tz=pytz.timezone("UTC"))}, "error_count":{"$lt":max_failures}}):
+        async for cron in job_table.find({"schedule.next_execution":{"$lte": datetime.now(tz=pytz.timezone("UTC"))}, "error_count":{"$lt":max_failures}}):
             next_execution=cron['schedule']["next_execution"]
             timezone=cron["schedule"]["timezone"]
 
             #converting the time to the specified timezone because timezones change. and checking if the scheduled time is equal to the current time in that cron timezone
             if datetime.now(tz=pytz.timezone(timezone)) >= next_execution.replace(tzinfo=pytz.timezone(timezone)):
                 url=cron["url"]
-                cron_id=str(cron["_id"])
+                job_id=str(cron["_id"])
                 method=cron["method"]
                 schedule=cron["schedule"]
                 header=cron["headers"]
                 body=cron["body"]
                 email=cron["user"]["email"]
-                task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "cron_id":cron_id, "method":method, "header":header, "body":body, "email":email, "notify_on_error":schedule["notify_on_error"]}))
+                task = asyncio.create_task(producer.send(CRON_TOPIC, {"url":url, "job_id":job_id, "method":method, "header":header, "body":body, "email":email, "notify_on_error":schedule["notify_on_error"]}))
                 tasks.append(task)
                 u_task=asyncio.create_task(update_cron(cron, schedule)) 
                 update_crons.append(u_task)

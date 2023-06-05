@@ -16,26 +16,17 @@ services:
   worker:
     restart: unless-stopped
     depends_on:
-      - consumer1
-      - consumer2
+      - consumer
     build: .
     command: sh -c "sh worker.sh"
     env_file:
       - ./.env
     environment:
       - MONGODB_URL=mongodb://mongo:27017
-  consumer1:
+  consumer:
     restart: unless-stopped
     build: .
     command: sh -c "sh consumer.sh"
-    env_file:
-      - ./.env
-    environment:
-      - MONGODB_URL=mongodb://mongo:27017
-  consumer2:
-    restart: unless-stopped
-    build: .
-    command: sh -c "sh  consumer.sh"
     env_file:
       - ./.env
     environment:

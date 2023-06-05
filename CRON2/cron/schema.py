@@ -137,7 +137,7 @@ class  CronSchema(BaseModel):
 class Response(ID):
     status:int
     timestamp:datetime
-    cron_id: str
+    job_id: str
     url: str
 
 class CronSchemaDetails(CronBase, ID):
