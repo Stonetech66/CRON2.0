@@ -5,5 +5,5 @@ load_dotenv()
 client=motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URL"))
 db=client['cron2']
 user_table=db['users']
-job_table=db['job']
-response_table=db['response']
+job_table=db['jobs']
+response_table=db['responses']
