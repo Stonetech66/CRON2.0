@@ -3,7 +3,7 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi.security import HTTPBearer
 from .auth.crud import UserCrud
 
-async def get_current_user(Authorization=Depends(HTTPBearer()), Authorize:AuthJWT=Depends(), access_token:str=Cookie(default=None),Bearer=Header(default=None)):
+async def get_current_user(Authorization=Depends(HTTPBearer()), Authorize:AuthJWT=Depends()):
     exception=HTTPException(status_code=401, detail='invalid access token or access token has expired', headers={'WWW-Authenticate': 'Bearer'})
     try:
 

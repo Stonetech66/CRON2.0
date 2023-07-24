@@ -34,7 +34,7 @@ class Login(BaseModel):
     password:str=Field(default=None)
 
 class LoginDetails(BaseModel):
-    user:dict=UserDetails
+    user:UserDetails
     access_token:str
     refresh_token:str
 

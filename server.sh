@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/bin/sh
 set -e
 cd /app/
 echo "starting server 🚀"
